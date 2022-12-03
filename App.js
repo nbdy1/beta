@@ -12,26 +12,31 @@ import BookScreen from "./src/screens/BookScreen";
 import MapScreen from "./src/screens/MapScreen";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import TabNavigator from "./src/screens/TabNavigator";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { useCallback } from "react";
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Tabs"
-          component={TabNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="NoTabs"
-          component={StageScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Tabs"
+            component={TabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="NoTabs"
+            component={StageScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
 
     // <NavigationContainer>
     //   <Stack.Navigator>

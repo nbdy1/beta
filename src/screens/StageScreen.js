@@ -5,8 +5,13 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
-  TextInput,
   Animated,
+  BackHandler,
+  Alert,
+  TouchableHighlight,
+  ScrollView,
+  KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 import { COLORS, SIZES } from "../constants";
 import data from "../data/StageData";
@@ -14,8 +19,119 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { SafeAreaView } from "react-native-safe-area-context";
 import AwesomeButton from "react-native-really-awesome-button-fixed";
 import Modal from "react-native-modal";
+import { Audio } from "expo-av";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { AntDesign, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { TextInput } from "react-native-paper";
+
+// TODO: Change the buttons to use flatlist and rendered with map function. Don't use scrollview for list with many children.
 
 const StageScreen = ({ navigation }) => {
+  const [sound, setSound] = useState("");
+
+  async function playCorrect() {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../assets/correct.mp3")
+    );
+    setSound(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+
+  async function playWrong() {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../assets/wrong.mp3")
+    );
+    setSound(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert(
+        "Keluar dari level",
+        "Apakah Anda yakin ingin kembali? (progres level tidak akan disimpan)",
+        [
+          {
+            text: "Tidak",
+            onPress: () => null,
+            style: "cancel",
+          },
+          { text: "Ya", onPress: () => navigation.goBack() },
+        ]
+      );
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
+  const corResArray = [
+    " Benar!",
+    " Benar!",
+    " Anak Pinter",
+    " Mantaappp",
+    " Benar!",
+    " Anak Pinter",
+    " 👏👏👏",
+  ];
+  const wrongResArray = [
+    " Salah",
+    " Lain kali",
+    " Salah",
+    " Perlu belajar lagi",
+    " Salah",
+    " Salah Pencet?",
+    " 😔",
+    " Salah",
+  ];
+
+  const corRes = corResArray[Math.floor(Math.random() * corResArray.length)];
+  const wrongRes =
+    wrongResArray[Math.floor(Math.random() * corResArray.length)];
+
   const allQuestions = data;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentOptionSelected, setCurrentOptionSelected] = useState(null);
@@ -27,6 +143,19 @@ const StageScreen = ({ navigation }) => {
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [showResponseModal, setShowResponseModal] = useState(false);
   const [text, setText] = useState("");
+  // const [manyText, setManyText] = useState({
+  //   0: "",
+  //   1: "",
+  //   2: "",
+  //   3: "",
+  //   4: "",
+  //   5: "",
+  // });
+  const [blank1, setBlank1] = useState("");
+  const [blank2, setBlank2] = useState("");
+  const [blank3, setBlank3] = useState("");
+  const [blank4, setBlank4] = useState("");
+
   const [questionType, setQuestionType] = useState(
     allQuestions[currentQuestionIndex]?.type
   );
@@ -38,8 +167,13 @@ const StageScreen = ({ navigation }) => {
       setCorrectOption(correct_option);
 
       if (selectedOption == correct_option) {
+        playCorrect();
         setIsAnswerCorrect(true);
+
         // Set Score
+      } else if (selectedOption != correct_option) {
+        playWrong();
+        setIsAnswerCorrect(false);
       }
     } else if (questionType == "input") {
       let correct_answer = allQuestions[currentQuestionIndex]["correct_answer"];
@@ -48,7 +182,11 @@ const StageScreen = ({ navigation }) => {
       console.log(`loweredAnswer: ${correct_answer}`);
 
       if (loweredAnswer == correct_answer) {
+        playCorrect();
         setIsAnswerCorrect(true);
+      } else if (loweredAnswer != correct_answer) {
+        playWrong();
+        setIsAnswerCorrect(false);
       }
     }
     // Show Next Button
@@ -70,65 +208,280 @@ const StageScreen = ({ navigation }) => {
   };
 
   const renderQuestion = () => {
+    if (questionType == "fillBlank") {
+      return (
+        <View>
+          <Text
+            style={{ fontFamily: "Anek-B" }}
+            className={`${
+              isKeyboardVisible ? "mb-3" : "mb-6"
+            } mt-6 text-2xl text-black`}
+          >
+            Isi kata yang kurang dari terjemahan kalimat berikut
+          </Text>
+          <Text
+            style={{ fontFamily: "Anek-B" }}
+            className={`${
+              isKeyboardVisible ? "mb-1" : "mb-3"
+            } text-lg text-blue-500`}
+          >
+            {allQuestions[currentQuestionIndex]?.from} ⬇️
+          </Text>
+          <Text style={{ fontFamily: "Anek-B" }} className="text-lg text-black">
+            {allQuestions[currentQuestionIndex]?.to}
+          </Text>
+        </View>
+      );
+    }
     return (
       <View>
         {/* Question Counter */}
-        <View className="flex-row items-end">
+        {/* <View className="flex-row items-end">
           <Text className="text-black text-lg mr-2">
-            {currentQuestionIndex + 1} {"/"}
+            {currentQuestionIndex + 1} {"/"} {allQuestions.length}
           </Text>
-          <Text className="text-black text-lg mr-2">{allQuestions.length}</Text>
-        </View>
+        </View> */}
         {/* Question */}
-        <Text className="mt-6 text-2xl text-black">
+        <Text
+          style={{ fontFamily: "Anek-B" }}
+          className={` ${
+            questionType == "new"
+              ? "mt-8 text-4xl leading-[50px] text-purple-500 mb-6"
+              : "mt-6 text-2xl text-black"
+          }`}
+        >
           {allQuestions[currentQuestionIndex]?.question}
         </Text>
       </View>
     );
   };
 
-  const renderOptions = () => {
+  const renderAnswerMethod = () => {
     if (questionType == "choice") {
+      // renderoptions
       return (
         <View className="px-2 mt-5 mb-5">
           {allQuestions[currentQuestionIndex]?.options.map((option) => (
             <TouchableOpacity
               // onPress={() => validateAnswer(option)}
+              activeOpacity={0.5}
               onPress={() => setCurrentOptionSelected(option)}
               disabled={isOptionsDisabled}
               key={option}
               className={`rounded-lg bg-gray-50 ${
                 currentOptionSelected == option ? "bg-yellow-100" : "bg-gray-50"
-              } shadow-lg shadow-black flex-row justify-between items-center py-5 my-3`}
+              } shadow-lg  flex-row justify-center items-center py-5 my-3`}
             >
-              <Text className="text-xl text-black px-5">{option}</Text>
+              <Text
+                style={{ fontFamily: "Anek-R" }}
+                className="text-xl mt-1 text-black px-5"
+              >
+                {option}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
       );
-    }
-    return null;
-  };
-
-  const renderInputBox = () => {
-    if (questionType == "input") {
+    } else if (questionType == "input") {
+      // renderinputbox
       return (
         <View className="px-2 mt-10 mb-5">
           <TextInput
-            className="h-12 pl-2 text-xl"
-            height={60}
+            style={{ fontFamily: "Anek-R" }}
             borderRadius={10}
             multiline={true}
-            backgroundColor="lightgray"
             placeholder="Apa ya??"
             onChangeText={(e) => setText(e)}
             defaultValue={text}
           />
         </View>
       );
+    } else if (questionType == "fillBlank") {
+      return (
+        <View
+          className={`${
+            isKeyboardVisible ? "mt-3" : "mt-10"
+          } px-2 mb-5 gap-x-2 flex-row justify-center`}
+        >
+          {allQuestions[currentQuestionIndex]?.answers.map((data, index) => (
+            <View key={data} className="mb-2">
+              <TextInput
+                className="h-12 pl-2 pt-3 text-xl w-20"
+                style={{ fontFamily: "Anek-R" }}
+                height={60}
+                borderRadius={10}
+                multiline={true}
+                backgroundColor="lightgray"
+                placeholder={(index + 1).toString()}
+                // value={allQuestions[currentQuestionIndex]?.answers}
+                // //not done
+                // onChangeText={(text) => setBlank${index+1}({ text })}
+              />
+            </View>
+          ))}
+        </View>
+      );
+    } else if (questionType == "new") {
+      return (
+        <ScrollView className="px-2">
+          <TouchableOpacity
+            activeOpacity={0.5}
+            className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
+          >
+            <Text
+              style={{ fontFamily: "Anek-B" }}
+              className="text-black text-2xl"
+            >
+              Ane
+            </Text>
+            <Text
+              style={{ fontFamily: "Anek-R" }}
+              className="text-black text-xl"
+            >
+              👉 berarti{" "}
+              <Text className="text-blue-700 font-bold">'saya / aku'</Text>{" "}
+              dalam Bahasa Indonesia
+            </Text>
+            <Text
+              style={{ fontFamily: "Anek-R" }}
+              className="text-black text-xl"
+            >
+              <Text className="font-bold">Contoh: </Text> Ane lagi di pasar.
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
+          >
+            <Text
+              style={{ fontFamily: "Anek-B" }}
+              className="text-black text-2xl"
+            >
+              Ente
+            </Text>
+            <Text
+              style={{ fontFamily: "Anek-R" }}
+              className="text-black text-xl"
+            >
+              👉 berarti{" "}
+              <Text className="text-blue-700 font-bold">'kamu / engkau'</Text>{" "}
+              dalam Bahasa Indonesia
+            </Text>
+            <Text
+              style={{ fontFamily: "Anek-R" }}
+              className="text-black text-xl"
+            >
+              <Text className="font-bold">Contoh: </Text> Ente gimana sih.
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
+          >
+            <Text
+              style={{ fontFamily: "Anek-B" }}
+              className="text-black text-2xl"
+            >
+              Die
+            </Text>
+            <Text
+              style={{ fontFamily: "Anek-R" }}
+              className="text-black text-xl"
+            >
+              👉 berarti <Text className="text-blue-700 font-bold">'dia'</Text>{" "}
+              dalam Bahasa Indonesia
+            </Text>
+            <Text
+              style={{ fontFamily: "Anek-R" }}
+              className="text-black text-xl"
+            >
+              <Text className="font-bold">Contoh: </Text> Die lagi ke warung.
+            </Text>
+          </TouchableOpacity>
+          {/* <TouchableOpacity
+            activeOpacity={0.5}
+            className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md "
+          >
+            <Text
+              style={{ fontFamily: "Anek-B" }}
+              className="text-black text-2xl"
+            >
+              Die
+            </Text>
+            <Text
+              style={{ fontFamily: "Anek-R" }}
+              className="text-black text-xl"
+            >
+              👉 berarti <Text className="text-blue-700 font-bold">'dia'</Text>{" "}
+              dalam Bahasa Indonesia
+            </Text>
+            <Text
+              style={{ fontFamily: "Anek-R" }}
+              className="text-black text-xl"
+            >
+              <Text className="font-bold">Contoh: </Text> Die lagi ke warung.
+            </Text>
+          </TouchableOpacity> */}
+        </ScrollView>
+      );
     }
-    return null;
   };
+
+  // function handleChange(evt) {
+  //   const value = evt.target.value;
+
+  //   setManyText({
+  //     ...manyText,
+
+  //     [evt.target.name]: value,
+  //   });
+  // }
+
+  // const renderOptions = () => {
+  //   return (
+  //     <View className="px-2 mt-5 mb-5">
+  //       {allQuestions[currentQuestionIndex]?.options.map((option) => (
+  //         <TouchableOpacity
+  //           // onPress={() => validateAnswer(option)}
+  //           onPress={() => setCurrentOptionSelected(option)}
+  //           disabled={isOptionsDisabled}
+  //           key={option}
+  //           className={`rounded-lg bg-gray-50 ${
+  //             currentOptionSelected == option ? "bg-yellow-100" : "bg-gray-50"
+  //           } shadow-sm  flex-row justify-center items-center py-5 my-3`}
+  //         >
+  //           <Text
+  //             style={{ fontFamily: "Anek-R" }}
+  //             className="text-xl mt-1 text-black px-5"
+  //           >
+  //             {option}
+  //           </Text>
+  //         </TouchableOpacity>
+  //       ))}
+  //     </View>
+  //   );
+  // };
+
+  // const renderInputBox = () => {
+  //   if (questionType == "input") {
+  //     return (
+  //       <View className="px-2 mt-10 mb-5">
+  //         <TextInput
+  //           className="h-14 pl-2 pt-2 text-xl"
+  //           style={{ fontFamily: "Anek-R" }}
+  //           height={60}
+  //           borderRadius={10}
+  //           multiline={true}
+  //           backgroundColor="lightgray"
+  //           placeholder="Apa ya??"
+  //           onChangeText={(e) => setText(e)}
+  //           defaultValue={text}
+  //         />
+  //       </View>
+  //     );
+  //   }
+  //   return null;
+  // };
 
   const handleNext = () => {
     closeModal();
@@ -188,13 +541,25 @@ const StageScreen = ({ navigation }) => {
         <View className="absolute bottom-5 right-5 left-5">
           <TouchableOpacity
             className={`${
-              currentOptionSelected === null ? "bg-gray-300" : "bg-blue-500"
-            } shadow-xl rounded-xl py-2 w-full`}
+              currentOptionSelected === null
+                ? "bg-gray-300"
+                : "bg-blue-500 shadow-2xl"
+            }  rounded-xl py-2 w-full`}
             disabled={currentOptionSelected === null ? true : false}
             onPress={() => checkAndModal(currentOptionSelected)}
           >
-            <Text className={`font-bold text-center text-white text-2xl`}>
-              Cek Jawaban
+            <Text
+              style={{ fontFamily: "Anek-SXB" }}
+              className={`pt-3 text-center text-white text-2xl`}
+            >
+              {`Cek Jawaban `}
+              <FontAwesome5
+                className="pl-2"
+                name={
+                  currentOptionSelected === null ? "question" : "user-check"
+                }
+                size={25}
+              />
             </Text>
           </TouchableOpacity>
         </View>
@@ -204,13 +569,61 @@ const StageScreen = ({ navigation }) => {
         <View className="absolute bottom-5 right-5 left-5">
           <TouchableOpacity
             className={`${
-              text === "" ? "bg-gray-300" : "bg-blue-500"
-            } shadow-xl rounded-xl py-2 w-full`}
+              text === "" ? "bg-gray-300" : "bg-blue-500 shadow-2xl"
+            } rounded-xl py-2 w-full`}
             disabled={text === "" ? true : false}
             onPress={() => checkAndModal()}
           >
-            <Text className={`font-bold text-center text-white text-2xl`}>
-              Cek Jawaban
+            <Text
+              style={{ fontFamily: "Anek-SXB" }}
+              className={`pt-3 text-center text-white text-2xl`}
+            >
+              {`Cek Jawaban `}
+              <FontAwesome5
+                className="pl-2"
+                name={text === "" ? "question" : "user-check"}
+                size={25}
+              />
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (questionType == "fillBlank") {
+      return (
+        <View className="absolute bottom-5 right-5 left-5">
+          <TouchableOpacity
+            className={`${
+              true === true ? "bg-blue-500" : "bg-blue-500 shadow-2xl"
+            } rounded-xl py-2 w-full`}
+            onPress={() => checkAndModal()}
+          >
+            <Text
+              style={{ fontFamily: "Anek-SXB" }}
+              className={`pt-3 text-center text-white text-2xl`}
+            >
+              {`Cek Jawaban `}
+              <FontAwesome5
+                className="pl-2"
+                name={text === "" ? "question" : "user-check"}
+                size={25}
+              />
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (questionType == "new") {
+      return (
+        <View className="absolute bottom-5 right-5 left-5">
+          <TouchableOpacity
+            className={`bg-purple-500 shadow-2xl rounded-xl py-2 w-full`}
+            disabled={false}
+            onPress={() => handleNext()}
+          >
+            <Text
+              style={{ fontFamily: "Anek-SXB" }}
+              className={`pt-3 text-center text-white text-2xl`}
+            >
+              Ok
             </Text>
           </TouchableOpacity>
         </View>
@@ -218,23 +631,83 @@ const StageScreen = ({ navigation }) => {
     }
   };
 
-  const renderNextButton = () => {
-    if (showNextButton) {
-      return (
-        <TouchableOpacity
-          onPress={() => handleNext()}
-          className="bg-green-500 rounded-full py-2 font-bold w-20 self-center"
-        >
-          <Text
-            style={{ fontSize: 20, color: COLORS.white, textAlign: "center" }}
+  // const renderNextButton = () => {
+  //   if (showNextButton) {
+  //     return (
+  //       <TouchableOpacity
+  //         onPress={() => handleNext()}
+  //         className="bg-green-500 rounded-full py-2 font-bold w-20 self-center"
+  //       >
+  //         <Text
+  //           style={{ fontSize: 20, color: COLORS.white, textAlign: "center" }}
+  //         >
+  //           Next
+  //         </Text>
+  //       </TouchableOpacity>
+  //     );
+  //   } else {
+  //     return null;
+  //   }
+  // };
+
+  const renderProgressSection = () => {
+    return (
+      <View className="flex-row w-full gap-x-2">
+        <AntDesign
+          onPress={() => {
+            Alert.alert(
+              "Keluar dari level",
+              "Apakah Anda yakin ingin kembali? (progres level tidak akan disimpan)",
+              [
+                {
+                  text: "Tidak",
+                  onPress: () => null,
+                  style: "cancel",
+                },
+                { text: "Ya", onPress: () => navigation.goBack() },
+              ]
+            );
+            return true;
+          }}
+          name="close"
+          size={35}
+          color="black"
+        />
+        <View className="flex-grow">
+          <View
+            style={{
+              width: "100%",
+              height: 20,
+              borderRadius: 20,
+              backgroundColor: "#00000020",
+              paddingBottom: 10,
+            }}
           >
-            Next
-          </Text>
-        </TouchableOpacity>
-      );
-    } else {
-      return null;
-    }
+            <Animated.View
+              className="bg-gradient-to-r from-blue-300 to-blue-500"
+              style={[
+                {
+                  height: 20,
+                  borderRadius: 20,
+                  backgroundColor: "#3b82f6",
+                },
+                {
+                  width: progressAnim,
+                },
+              ]}
+            ></Animated.View>
+          </View>
+          <View className="items-end mr-2">
+            <Text
+              style={{ fontFamily: "Anek-SXB" }}
+              className="text-black text-lg"
+            >
+              {currentQuestionIndex + 1} {"/"} {allQuestions.length}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
   };
 
   const [progress, setProgress] = useState(new Animated.Value(0));
@@ -242,85 +715,100 @@ const StageScreen = ({ navigation }) => {
     inputRange: [0, allQuestions.length],
     outputRange: ["0%", "100%"],
   });
-  const renderProgressBar = () => {
-    return (
-      <View
-        style={{
-          width: "100%",
-          height: 20,
-          borderRadius: 20,
-          backgroundColor: "#00000020",
-          paddingBottom: 10,
-        }}
-      >
-        <Animated.View
-          style={[
-            {
-              height: 20,
-              borderRadius: 20,
-              backgroundColor: COLORS.accent,
-            },
-            {
-              width: progressAnim,
-            },
-          ]}
-        ></Animated.View>
-      </View>
-    );
-  };
+  // const renderProgressBar = () => {
+  //   return (
+  //     <View
+  //       style={{
+  //         width: "100%",
+  //         height: 20,
+  //         borderRadius: 20,
+  //         backgroundColor: "blue",
+  //         paddingBottom: 10,
+  //       }}
+  //     >
+  //       <Animated.View
+  //         colo
+  //         style={[
+  //           {
+  //             height: 20,
+  //             borderRadius: 20,
+  //           },
+  //           {
+  //             width: progressAnim,
+  //           },
+  //         ]}
+  //       ></Animated.View>
+  //     </View>
+  //   );
+  // };
 
   return (
     <SafeAreaView className="flex-1">
-      <View className="flex-1 px-4 py-3">
-        {renderProgressBar()}
-        {renderQuestion()}
-        {renderOptions()}
-        {renderInputBox()}
-        {/* {renderNextButton()} */}
-        {renderCheckButton()}
-        <Modal
-          isVisible={showResponseModal}
-          animationIn={"slideInUp"}
-          animationOut={"slideOutDown"}
-          className={`shadow-lg shadow-black rounded-t-xl ${
-            isAnswerCorrect ? "bg-lime-100" : "bg-red-100"
-          }`}
-          hasBackdrop={false}
-          backdropOpacity={0.1}
-          style={{
-            height: "auto",
-            margin: 0,
-            padding: 15,
-            paddingTop: 25,
-            maxHeight: 500,
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-          }}
-        >
-          <Text
-            className={`text-2xl font-bold ${
-              isAnswerCorrect ? "text-lime-500" : "text-red-500"
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <View className="flex-1 px-4 py-3">
+          {/* {renderProgressBar()} */}
+          {renderProgressSection()}
+          {renderQuestion()}
+          {renderAnswerMethod()}
+          {/* {renderOptions()}
+        {renderInputBox()} */}
+          {/* {renderNextButton()} */}
+          {renderCheckButton()}
+          <Modal
+            isVisible={showResponseModal}
+            animationIn={"slideInUp"}
+            animationOut={"slideOutDown"}
+            className={`shadow-md  rounded-t-xl ${
+              isAnswerCorrect ? "bg-lime-100" : "bg-red-100"
             }`}
+            hasBackdrop={false}
+            backdropOpacity={0.1}
+            style={{
+              height: "auto",
+              margin: 0,
+              padding: 15,
+              paddingTop: 25,
+              maxHeight: 500,
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+            }}
           >
-            {isAnswerCorrect ? "Benar!" : "Salah"}
-          </Text>
-          {/* <Text className={`mt-2 mb-3 text-lime-500`}>
+            <Text
+              style={{ fontFamily: "Anek-SXB" }}
+              className={`text-3xl pt-2 pl-1 ${
+                isAnswerCorrect ? "text-lime-500" : "text-red-500"
+              }`}
+            >
+              <FontAwesome
+                name={isAnswerCorrect ? "check-circle" : "times-circle"}
+                size={33}
+              />
+              {isAnswerCorrect ? corRes : wrongRes}
+            </Text>
+            {/* <Text className={`mt-2 mb-3 text-lime-500`}>
             Jawaban yang benar: aye
           </Text> */}
-          <TouchableOpacity
-            className={`py-3 mt-5 shadow-sm shadow-black rounded-xl ${
-              isAnswerCorrect ? "bg-lime-500" : "bg-red-500"
-            }`}
-            onPress={() => handleNext()}
-          >
-            <Text className="font-bold text-center text-lg text-white">
-              Lanjut
-            </Text>
-          </TouchableOpacity>
-        </Modal>
-      </View>
+            <TouchableOpacity
+              className={`mt-5 rounded-xl ${
+                isAnswerCorrect ? "bg-lime-500" : "bg-red-500"
+              }`}
+              onPress={() => handleNext()}
+            >
+              <Text
+                style={{ fontFamily: "Anek-EXB" }}
+                className="mt-1 py-2 text-center text-lg text-white"
+              >
+                Lanjut
+              </Text>
+            </TouchableOpacity>
+          </Modal>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

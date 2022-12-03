@@ -1,5 +1,9 @@
 export default data = [
   {
+    question: "Kosakata baru!",
+    type: "new",
+  },
+  {
     question: "Apa bahasa Betawinya 'aku'?",
     options: ["aye", "babe", "ema", "elu"],
     correct_option: "aye",
@@ -9,6 +13,12 @@ export default data = [
     question: "Ketik bahasa Indonesianya 'keduman'",
     correct_answer: "kebagian",
     type: "input",
+  },
+  {
+    from: "BI: Nama aku Budi. Kalau dia Asep.",
+    to: "BB: Nama [...] Budi. Kalau [...] Asep.",
+    answers: ["aye", "Budi"],
+    type: "fillBlank",
   },
   {
     question: "Apa bahasa Betawinya 'siapa'?",
