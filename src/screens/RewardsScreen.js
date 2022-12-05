@@ -111,6 +111,7 @@ const RewardsScreen = ({ navigation }) => {
           Kumpulkan poin untuk mendapatkan hadiah-hadiah seru!
         </Text>
         <FlatList
+          contentContainerStyle={{ paddingBottom: 70 }}
           data={REWARDS_DATA}
           renderItem={renderItem}
           className="pr-3"

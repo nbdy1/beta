@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import {
   Feather,
   Fontisto,
@@ -21,6 +21,7 @@ import { Platform } from "expo-modules-core";
 import { useEffect } from "react";
 import * as Location from "expo-location";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { useRef } from "react";
 
 const MapScreen = ({ navigation }) => {
   // const [hasLocalPermission, setHasLocalPermission] = useState(false);
@@ -53,57 +54,79 @@ const MapScreen = ({ navigation }) => {
   //   },
   // });
 
-  const handleRestaurantSearch = () => {
-    const url =
-      "https://maps.googleapis.com/maps/api/pzlace/nearbysearch/json?";
-    const location = `location=${latitude.longitude}`;
-    const radius = "&radius=3000";
-    const type = "&keyword=restaurant";
-    const key = "AIzaSyAZzsf6ZSvEYbaGx7klKcHtZet_IIG0Uls";
-    const restaurantSearchUrl = url + location + radius + type + key;
+  // const handleRestaurantSearch = () => {
+  //   const url =
+  //     "https://maps.googleapis.com/maps/api/pzlace/nearbysearch/json?";
+  //   const location = `location=${latitude.longitude}`;
+  //   const radius = "&radius=3000";
+  //   const type = "&keyword=restaurant";
+  //   const key = "AIzaSyAZzsf6ZSvEYbaGx7klKcHtZet_IIG0Uls";
+  //   const restaurantSearchUrl = url + location + radius + type + key;
 
-    fetch(restaurantSearchUrl)
-      .then((response) => response.json())
-      .then((result) => setRestaurantList(result))
-      .catch((e) => console.log(e));
+  //   fetch(restaurantSearchUrl)
+  //     .then((response) => response.json())
+  //     .then((result) => setRestaurantList(result))
+  //     .catch((e) => console.log(e));
+  // };
+
+  const GOOGLE_PLACES_API_KEY = "AIzaSyAZzsf6ZSvEYbaGx7klKcHtZet_IIG0Uls";
+
+  const mapRef = useRef(null);
+
+  const [region, setRegion] = useState({
+    latitude: -6.2677403,
+    longitude: 106.7370338,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
+
+  const KosGw = {
+    latitude: -6.2677403,
+    longitude: 106.7370338,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
   };
 
-  const [text, setText] = useState("");
-  const initialMapState = {
-    categories: [
-      {
-        name: "Soto Betawi",
-        icon: (
-          <MaterialCommunityIcons
-            name="bowl-mix-outline"
-            color="gray"
-            size={15}
-          />
-        ),
-      },
-      {
-        name: "Kerak Telor",
-        icon: <Ionicons name="egg-outline" color="gray" size={15} />,
-      },
-      {
-        name: "Tempat Peninggalan",
-        icon: <Fontisto name="holiday-village" color="gray" size={15} />,
-      },
-    ],
+  const goToKos = () => {
+    //Animate the user to new region. Complete this animation in 3 seconds
+    mapRef.current.animateToRegion(KosGw, 1 * 1000);
   };
+
+  // const initialMapState = {
+  //   categories: [
+  //     {
+  //       name: "Soto Betawi",
+  //       icon: (
+  //         <MaterialCommunityIcons
+  //           name="bowl-mix-outline"
+  //           color="gray"
+  //           size={15}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       name: "Kerak Telor",
+  //       icon: <Ionicons name="egg-outline" color="gray" size={15} />,
+  //     },
+  //     {
+  //       name: "Tempat Peninggalan",
+  //       icon: <Fontisto name="holiday-village" color="gray" size={15} />,
+  //     },
+  //   ],
+  // };
+
   return (
     <>
       <MapView
+        ref={mapRef}
+        onRegionChangeComplete={(region) => setRegion(region)}
+        region={region}
         className="flex-1"
-        initialRegion={{
-          latitude: -6.2677,
-          longitude: 156.737,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      />
-      <View className="absolute flex-1 flex-row top-8 bg-white justify-between items-center px-5 rounded-full self-center w-11/12">
-        <TextInput
+      >
+        <Marker coordinate={KosGw} />
+      </MapView>
+      <View className="absolute z-50 flex-1 flex-row w-11/12 self-center top-8">
+        {/* <TextInput
           className="h-16 w-11/12 text-base rounded-full bg-white"
           value={text}
           placeholder="Cari Restoran Betawi Terdekat?"
@@ -115,10 +138,47 @@ const MapScreen = ({ navigation }) => {
           className="px-3"
           color="gray"
           size={25}
-        ></Ionicons>
+        ></Ionicons> */}
+        <GooglePlacesAutocomplete
+          query={{
+            key: GOOGLE_PLACES_API_KEY,
+            language: "en",
+            components: "country:id",
+          }}
+          GooglePlacesSearchQuery={{
+            type: "restaurant",
+            location: `${region.latitude},${region.longitude}`,
+            radius: "10000",
+          }}
+          returnKeyType={"default"}
+          fetchDetails={true}
+          onPress={(data, details = null) => console.log(data, details)}
+          onFail={(error) => console.log(error)}
+          onNotFound={() => console.log("no results")}
+          listEmptyComponent={() => (
+            <View className="flex-1 bg-white p-2">
+              <Text>Tidak ada hasil yang ditemukan </Text>
+            </View>
+          )}
+          textInputProps={{
+            InputComp: TextInput,
+            placeholder: "Cari Restoran Soto Betawi?",
+          }}
+        />
+      </View>
+      <View className="absolute bottom-24 self-center">
+        <TouchableOpacity
+          className="bg-blue-500 w-32 self-center text-center rounded-full mb-2"
+          onPress={() => goToKos()}
+        >
+          <Text className="text-center text-lg text-white p-2">Go To Kos</Text>
+        </TouchableOpacity>
+        <View className="bg-white rounded-full opacity-50">
+          <Text className="text-xl p-2 text-black">{`${region.latitude}, ${region.longitude}`}</Text>
+        </View>
       </View>
 
-      <ScrollView
+      {/* <ScrollView
         horizontal
         scrollEventThrottle={1}
         showsHorizontalScrollIndicator={false}
@@ -139,8 +199,8 @@ const MapScreen = ({ navigation }) => {
             <Text>{category.name}</Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
-      <View style={styles.container}>
+      </ScrollView> */}
+      {/* <View style={styles.container}>
         <FlatList
           data={restaurantList.results}
           keyExtractor={(item) => item.place_id}
@@ -152,7 +212,7 @@ const MapScreen = ({ navigation }) => {
             padding: 5,
           }}
         />
-        <TouchableOpacity onPress={() => handleRestaurantSearch()}>
+        <TouchableOpacity onPress={() => console.log("Test")}>
           <Text
             style={{
               backgroundColor: "grey",
@@ -165,7 +225,7 @@ const MapScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
-      </View>
+      </View> */}
     </>
   );
 };
