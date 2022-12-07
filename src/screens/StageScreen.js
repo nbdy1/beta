@@ -30,10 +30,12 @@ import {
 } from "@expo/vector-icons";
 import { TextInput } from "react-native-paper";
 import { useCallback } from "react";
+import { firebase } from "../../firebaseConfig";
+import { reject, update } from "lodash";
 
 // TODO: Change the buttons to use flatlist and rendered with map function. Don't use scrollview for list with many children.
 
-const StageScreen = ({ navigation }) => {
+const StageScreen = ({ route, navigation }) => {
   const debounce = require("lodash.debounce");
   const [sound, setSound] = useState("");
 
@@ -67,6 +69,21 @@ const StageScreen = ({ navigation }) => {
         }
       : undefined;
   }, [sound]);
+
+  const updateBetacoins = () =>
+    new Promise(async (res, rej) => {
+      try {
+        await docRef
+          .update({
+            "currency.betacoins": firebase.firestore.FieldValue.increment(10),
+          })
+          .then(() => navigation.goBack());
+        res();
+      } catch (e) {
+        reject(e);
+        console.log(e);
+      }
+    });
 
   useEffect(() => {
     const backAction = () => {
@@ -115,6 +132,11 @@ const StageScreen = ({ navigation }) => {
     };
   }, []);
 
+  const docRef = firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid);
+
   const corResArray = [
     " Benar!",
     " Benar!",
@@ -139,7 +161,9 @@ const StageScreen = ({ navigation }) => {
   const wrongRes =
     wrongResArray[Math.floor(Math.random() * corResArray.length)];
 
-  const allQuestions = data;
+  const { level } = route.params;
+
+  const allQuestions = data[level - 1];
   // reducer finds and sums the amount of 'new' questions we have and sums it. So we can get the total points only questions by subtracting it from the length.
   const pointQuestionsTotal =
     allQuestions.length -
@@ -197,7 +221,10 @@ const StageScreen = ({ navigation }) => {
       console.log(`correct_answer: ${correct_answer}`);
       console.log(`loweredAnswer: ${correct_answer}`);
 
-      if (loweredAnswer == correct_answer) {
+      if (
+        loweredAnswer == correct_answer ||
+        correct_answer.includes(loweredAnswer)
+      ) {
         playCorrect();
         setIsAnswerCorrect(true);
         setScore((prev) => prev + 1);
@@ -479,21 +506,35 @@ const StageScreen = ({ navigation }) => {
                 >
                   {value.new_word}
                 </Text>
+                {value.meaning && (
+                  <Text
+                    style={{ fontFamily: "Anek-R" }}
+                    className="text-black text-xl"
+                  >
+                    👉 berarti{" "}
+                    <Text className="text-blue-700 font-bold">
+                      '{value.meaning}'
+                    </Text>{" "}
+                    dalam Bahasa Indonesia
+                  </Text>
+                )}
+                {value.same_with && (
+                  <Text
+                    style={{ fontFamily: "Anek-R" }}
+                    className="text-black text-xl"
+                  >
+                    🤝 sama dengan{" "}
+                    <Text className="text-blue-700 font-bold">
+                      '{value.same_with}'
+                    </Text>{" "}
+                    dalam Bahasa Betawi
+                  </Text>
+                )}
                 <Text
                   style={{ fontFamily: "Anek-R" }}
                   className="text-black text-xl"
                 >
-                  👉 berarti{" "}
-                  <Text className="text-blue-700 font-bold">
-                    '{value.meaning}'
-                  </Text>{" "}
-                  dalam Bahasa Indonesia
-                </Text>
-                <Text
-                  style={{ fontFamily: "Anek-R" }}
-                  className="text-black text-xl"
-                >
-                  <Text className="font-bold">Contoh: </Text> {value.example}.
+                  <Text className="font-bold">Contoh: </Text> {value.example}
                 </Text>
               </TouchableOpacity>
             )
@@ -1004,7 +1045,7 @@ const StageScreen = ({ navigation }) => {
           <TouchableOpacity
             className={`mt-5 rounded-full absolute bottom-5 px-3 bg-red-500
             }`}
-            onPress={() => navigation.goBack()}
+            onPress={() => updateBetacoins()}
           >
             <Text
               style={{ fontFamily: "Anek-SXB" }}

@@ -1,48 +1,57 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AwesomeButton from "react-native-really-awesome-button-fixed";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Fontisto, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Fontisto } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import StageScreen from "./StageScreen";
-import { useLayoutEffect } from "react";
 import { useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { LinearGradient } from "expo-linear-gradient";
-
-const Stack = createNativeStackNavigator();
+import { firebase } from "../../firebaseConfig";
 
 const HomeScreen = ({ navigation }) => {
-  const [fontsLoaded] = useFonts({
-    "Anek-R": require("../../assets/fonts/AnekTelugu-Regular.ttf"),
-    "Anek-B": require("../../assets/fonts/AnekTelugu-Bold.ttf"),
-    "Anek-EB": require("../../assets/fonts/AnekTelugu-ExtraBold.ttf"),
-    "Anek-EXB": require("../../assets/fonts/AnekTelugu_Expanded-Bold.ttf"),
-    "Anek-SXB": require("../../assets/fonts/AnekTelugu_SemiExpanded-Bold.ttf"),
-    // "Anek-CM": require("../../assets/fonts/AnekTelugu_Condensed-Medium.ttf"),
-    // "Anek-SCB": require("../../assets/fonts/AnekTelugu_SemiCondensed-Bold.ttf"),
-  });
-
-  useEffect(() => {
-    async function prepare() {
-      await SplashScreen.preventAutoHideAsync();
-    }
-    prepare();
-  }, []);
-
-  if (!fontsLoaded) {
-    return undefined;
-  } else {
-    SplashScreen.hideAsync();
-  }
-
   const [c1, dc1] = ["#EF4444", "#DC2626"];
   const titleFont = "Anek-EB";
   const lvlFont = "Anek-SXB";
+
+  const [data, setData] = useState("");
+  // const [betacoins, setBetacoins] = useState(0);
+  // const [levelProgress, setLevelProgress] = useState({
+  //   levelProgress: { chapter: 1, stage: 1, substage: 1 },
+  // });
+
+  // useEffect(() => {
+  //   firebase
+  //     .firestore()
+  //     .collection("users")
+  //     .doc(firebase.auth().currentUser.uid)
+  //     .get()
+  //     .then((snapshot) => {
+  //       if (snapshot.exists) {
+  //         setData(snapshot.data());
+  //         console.log(snapshot.data());
+  //       } else {
+  //         console.log("User does not exist");
+  //       }
+  //     });
+  // }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .onSnapshot((snapshot) => {
+          setData(snapshot.data());
+          console.log(snapshot.data());
+        });
+    }
+
+    fetchData();
+  }, []);
   return (
     <>
       <SafeAreaView className="flex-1 bg-red-500">
@@ -50,24 +59,34 @@ const HomeScreen = ({ navigation }) => {
         <View className="bg-gray-50 flex-1">
           <View className=" h-14 flex-row bg-red-500 w-full justify-between items-center px-3">
             <View className="flex-row items-center pl-3">
-              <Fontisto name="flag" size={25} color={"#F9FAFB"} />
+              {data.firstName && (
+                <Text
+                  style={{ fontFamily: "Anek-SXB" }}
+                  className="text-gray-50 pt-2 text-2xl"
+                >
+                  👋 Halo, {data.firstName}
+                </Text>
+              )}
+              {/* <Fontisto name="flag" size={25} color={"#F9FAFB"} />
               <Text
                 style={{ fontFamily: lvlFont }}
                 className="text-gray-50 ml-3 mt-3 text-2xl"
               >
                 | Pelajar
-              </Text>
+              </Text> */}
             </View>
 
-            <View className="flex-row items-center">
-              <FontAwesome5 name="coins" size={24} color="white" />
-              <Text
-                style={{ fontFamily: lvlFont }}
-                className="text-gray-50 ml-3 mt-3 text-2xl"
-              >
-                355
-              </Text>
-            </View>
+            {data.currency?.betacoins && (
+              <View className="flex-row items-center">
+                <FontAwesome5 name="coins" size={24} color="white" />
+                <Text
+                  style={{ fontFamily: lvlFont }}
+                  className="text-gray-50 ml-3 mt-3 text-2xl"
+                >
+                  {data.currency?.betacoins}
+                </Text>
+              </View>
+            )}
           </View>
           <ScrollView className="px-7">
             <Text
@@ -81,7 +100,7 @@ const HomeScreen = ({ navigation }) => {
               borderRadius={50}
               backgroundColor={c1}
               backgroundDarker={dc1}
-              onPress={() => navigation.navigate("NoTabs")}
+              onPress={() => navigation.navigate("NoTabs", { level: 1 })}
               style={{ alignItems: "center", justifyContent: "center" }}
             >
               <Text
@@ -102,7 +121,8 @@ const HomeScreen = ({ navigation }) => {
                 borderRadius={50}
                 backgroundColor={c1}
                 backgroundDarker={dc1}
-                fontFamily={lvlFont}
+                onPress={() => navigation.navigate("NoTabs", { level: 2 })}
+                style={{ alignItems: "center", justifyContent: "center" }}
               >
                 <Text
                   style={{
@@ -123,7 +143,6 @@ const HomeScreen = ({ navigation }) => {
                 borderRadius={50}
                 backgroundColor={c1}
                 backgroundDarker={dc1}
-                fontFamily={lvlFont}
               >
                 <Text
                   style={{

@@ -1,29 +1,77 @@
-import * as React from "react";
-import { Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "./src/screens/HomeScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import ProfileScreen from "./src/screens/ProfileScreen";
 import StageScreen from "./src/screens/StageScreen";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import RewardsScreen from "./src/screens/RewardsScreen";
-import BookScreen from "./src/screens/BookScreen";
-import MapScreen from "./src/screens/MapScreen";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import TabNavigator from "./src/screens/TabNavigator";
-import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback } from "react";
+import { useFonts } from "expo-font";
+import Login from "./src/screens/Login";
+import Registration from "./src/screens/Registration";
+import { firebase } from "./firebaseConfig";
 
-const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState(null);
+
+  const [fontsLoaded] = useFonts({
+    "Anek-R": require("./assets/fonts/AnekTelugu-Regular.ttf"),
+    "Anek-B": require("./assets/fonts/AnekTelugu-Bold.ttf"),
+    "Anek-EB": require("./assets/fonts/AnekTelugu-ExtraBold.ttf"),
+    "Anek-EXB": require("./assets/fonts/AnekTelugu_Expanded-Bold.ttf"),
+    "Anek-SXB": require("./assets/fonts/AnekTelugu_SemiExpanded-Bold.ttf"),
+    // "Anek-CM": require("../../assets/fonts/AnekTelugu_Condensed-Medium.ttf"),
+    // "Anek-SCB": require("../../assets/fonts/AnekTelugu_SemiCondensed-Bold.ttf"),
+  });
+
+  useEffect(() => {
+    const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+
+    async function prepare() {
+      await SplashScreen.preventAutoHideAsync();
+    }
+    prepare();
+    return subscriber;
+  }, []);
+
+  if (!fontsLoaded) {
+    return undefined;
+  } else {
+    SplashScreen.hideAsync();
+  }
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  if (initializing) return null;
+
+  if (!user) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Registration"
+            component={Registration}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="Tabs">
           <Stack.Screen
             name="Tabs"
             component={TabNavigator}
@@ -37,25 +85,5 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
-
-    // <NavigationContainer>
-    //   <Stack.Navigator>
-    //     <Stack.Screen
-    //       name="Home"
-    //       component={HomeScreen}
-    //       options={{ headerShown: false }}
-    //     />
-    //     <Stack.Screen
-    //       name="Profile"
-    //       component={ProfileScreen}
-    //       options={{ headerShown: false }}
-    //     />
-    //     <Stack.Screen
-    //       name="Stage"
-    //       component={StageScreen}
-    //       options={{ headerShown: false }}
-    //     />
-    //   </Stack.Navigator>
-    // </NavigationContainer>
   );
 }
