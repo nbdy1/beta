@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { firebase } from "../../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
+import { COLORS } from "../constants/theme";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -25,16 +26,24 @@ const Login = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-red-500">
+    <SafeAreaView className="flex-1 bg-secondary">
       <StatusBar style="auto" />
-      <View className="flex-1 justify-center items-center bg-red-500">
+      <View className="flex-1 justify-center items-center bg-secondary">
         <Text
-          style={{ fontFamily: "Anek-SXB", fontSize: 32, color: "#FFFFFF" }}
+          style={{
+            fontFamily: "Anek-SXB",
+            fontSize: 32,
+            color: COLORS.white,
+          }}
         >
-          Betawith You
+          BetawithYou
         </Text>
         <Text
-          style={{ fontFamily: "Anek-SXB", fontSize: 24, color: "#FFFFFF" }}
+          style={{
+            fontFamily: "Anek-SXB",
+            fontSize: 24,
+            color: COLORS.white,
+          }}
           className="mt-5 mb-3"
         >
           Login Akun
@@ -56,11 +65,14 @@ const Login = () => {
         />
         <TouchableOpacity
           onPress={() => loginUser(email, password)}
-          className="bg-white shadow-xl rounded-full mt-7 px-5 pt-2 shadow-white"
+          className="bg-primary shadow-xl rounded-full mt-7 px-5 pt-2 shadow-white"
         >
           <Text
-            className="text-red-500"
-            style={{ fontFamily: "Anek-B", fontSize: 16 }}
+            style={{
+              fontFamily: "Anek-B",
+              fontSize: 16,
+              color: COLORS.white,
+            }}
           >
             Login
           </Text>

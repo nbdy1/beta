@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import StageScreen from "./src/screens/StageScreen";
 import TabNavigator from "./src/screens/TabNavigator";
+import StageScreen from "./src/screens/StageScreen";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback } from "react";
 import { useFonts } from "expo-font";
 import Login from "./src/screens/Login";
 import Registration from "./src/screens/Registration";
 import { firebase } from "./firebaseConfig";
+import { ContextProvider } from "./src/constants/noCycle";
 
 const Stack = createNativeStackNavigator();
 
@@ -69,21 +70,23 @@ export default function App() {
     );
   }
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Tabs">
-          <Stack.Screen
-            name="Tabs"
-            component={TabNavigator}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="NoTabs"
-            component={StageScreen}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <ContextProvider>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Tabs">
+            <Stack.Screen
+              name="Tabs"
+              component={TabNavigator}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="NoTabs"
+              component={StageScreen}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </ContextProvider>
   );
 }

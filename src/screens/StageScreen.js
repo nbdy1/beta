@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -17,7 +17,6 @@ import { COLORS, SIZES } from "../constants";
 import data from "../data/StageData";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AwesomeButton from "react-native-really-awesome-button-fixed";
 import Modal from "react-native-modal";
 import { Audio } from "expo-av";
 import { useFonts } from "expo-font";
@@ -31,12 +30,14 @@ import {
 import { TextInput } from "react-native-paper";
 import { useCallback } from "react";
 import { firebase } from "../../firebaseConfig";
-import { reject, update } from "lodash";
+import { Context } from "../constants/noCycle";
 
-// TODO: Change the buttons to use flatlist and rendered with map function. Don't use scrollview for list with many children.
+// TODO: remove the require cycle
+
+// TODO: use redux toolkit for offline dummy version on the street (actually don't.)
 
 const StageScreen = ({ route, navigation }) => {
-  const debounce = require("lodash.debounce");
+  const { unlock, setUnlock, betacoins, setBetacoins } = useContext(Context);
   const [sound, setSound] = useState("");
 
   async function playCorrect() {
@@ -79,8 +80,9 @@ const StageScreen = ({ route, navigation }) => {
           })
           .then(() => navigation.goBack());
         res();
+        setUnlock((unlock) => unlock + 1);
       } catch (e) {
-        reject(e);
+        rej(e);
         console.log(e);
       }
     });
@@ -163,7 +165,7 @@ const StageScreen = ({ route, navigation }) => {
 
   const { level } = route.params;
 
-  const allQuestions = data[level - 1];
+  const allQuestions = data[level];
   // reducer finds and sums the amount of 'new' questions we have and sums it. So we can get the total points only questions by subtracting it from the length.
   const pointQuestionsTotal =
     allQuestions.length -
@@ -268,11 +270,6 @@ const StageScreen = ({ route, navigation }) => {
     }
     // Show Next Button
   };
-
-  const validateAnswerDebouncer = useCallback(
-    debounce((e) => validateAnswer(), 2000),
-    []
-  );
 
   const checkAndModal = (payload) => {
     validateAnswer(payload);
@@ -957,7 +954,7 @@ const StageScreen = ({ route, navigation }) => {
           <View className="items-end mr-2">
             <Text
               style={{ fontFamily: "Anek-SXB" }}
-              className="text-black text-lg absolute top-20"
+              className="text-black text-lg absolute top-5"
             >
               {currentQuestionIndex + 1} {"/"} {allQuestions.length}
             </Text>

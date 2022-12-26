@@ -19,79 +19,26 @@ import {
 } from "@expo/vector-icons";
 import { Platform } from "expo-modules-core";
 import { useEffect } from "react";
-import * as Location from "expo-location";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useRef } from "react";
+import MapViewDirections from "react-native-maps-directions";
+import * as Location from "expo-location";
 
 const MapScreen = ({ navigation }) => {
-  // const [hasLocalPermission, setHasLocalPermission] = useState(false);
-  // const [latitude, setLatitude] = useState(false);
-  // const [longitude, setLongitude] = useState(false);
-  // const [restaurantList, setRestaurantList] = useState(false);
+  const [location, setLocation] = useState(null);
 
-  // useEffect(() => {
-  //   getLocationAsync();
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
 
-  // async function getLocationAsync() {
-  //   const { status } = await Location.requestForegroundPermissionsAsync();
-  //   if (status === "granted") {
-  //     let location = await Location.getCurrentPositionAsync({});
-  //     setHasLocalPermission(true);
-  //     setLatitude(location.coords.latitude);
-  //     setLongitude(location.coords.longitude);
-  //   } else {
-  //     alert("Location permission not granted");
-  //   }
-  // }
-
-  // const styles = StyleSheet.create({
-  //   container: {
-  //     flex: 1,
-  //     backgroundColor: "#fff",
-  //     alignItems: "center",
-  //     justifyContent: "center",
-  //   },
-  // });
-
-  // const handleRestaurantSearch = () => {
-  //   const url =
-  //     "https://maps.googleapis.com/maps/api/pzlace/nearbysearch/json?";
-  //   const location = `location=${latitude.longitude}`;
-  //   const radius = "&radius=3000";
-  //   const type = "&keyword=restaurant";
-  //   const key = "AIzaSyAZzsf6ZSvEYbaGx7klKcHtZet_IIG0Uls";
-  //   const restaurantSearchUrl = url + location + radius + type + key;
-
-  //   fetch(restaurantSearchUrl)
-  //     .then((response) => response.json())
-  //     .then((result) => setRestaurantList(result))
-  //     .catch((e) => console.log(e));
-  // };
-
-  const GOOGLE_PLACES_API_KEY = "AIzaSyAZzsf6ZSvEYbaGx7klKcHtZet_IIG0Uls";
-
-  const mapRef = useRef(null);
-
-  const [region, setRegion] = useState({
-    latitude: -6.2677403,
-    longitude: 106.7370338,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  });
-
-  const KosGw = {
-    latitude: -6.2677403,
-    longitude: 106.7370338,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  };
-
-  const goToKos = () => {
-    //Animate the user to new region. Complete this animation in 3 seconds
-    mapRef.current.animateToRegion(KosGw, 1 * 1000);
-  };
-
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
   // const initialMapState = {
   //   categories: [
   //     {
@@ -114,45 +61,86 @@ const MapScreen = ({ navigation }) => {
   //     },
   //   ],
   // };
+  const GOOGLE_PLACES_API_KEY = "AIzaSyAZzsf6ZSvEYbaGx7klKcHtZet_IIG0Uls";
+
+  const mapRef = useRef(null);
+  const queryRef = useRef(null);
+
+  const [region, setRegion] = useState({
+    latitude: -6.2677403,
+    longitude: 106.7370338,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
+
+  const [destination, setDestination] = useState({
+    latitude: -8.2677403,
+    longitude: 108.7370338,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
+
+  const [searched, setSearched] = useState(false);
+
+  const goToMarker = () => {
+    mapRef.current.animateToRegion(
+      {
+        latitude: searched.location.lat,
+        longitude: searched.location.lng,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      },
+      1 * 1000
+    );
+  };
 
   return (
     <>
       <MapView
+        initialRegion={region}
         ref={mapRef}
         onRegionChangeComplete={(region) => setRegion(region)}
         region={region}
         className="flex-1"
       >
-        <Marker coordinate={KosGw} />
+        {/* <Marker coordinate={KosGw} /> */}
+        {searched && (
+          <Marker
+            coordinate={{
+              latitude: searched.location.lat,
+              longitude: searched.location.lng,
+            }}
+            title={"Searched"}
+            description={searched.description}
+            identifier="searched"
+          />
+        )}
+        {location != null && (
+          <Marker
+            coordinate={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+          />
+        )}
       </MapView>
-      <View className="absolute z-50 flex-1 flex-row w-11/12 self-center top-8">
-        {/* <TextInput
-          className="h-16 w-11/12 text-base rounded-full bg-white"
-          value={text}
-          placeholder="Cari Restoran Betawi Terdekat?"
-          onChangeText={(text) => setText(text)}
-        />
-
-        <Ionicons
-          name="ios-search"
-          className="px-3"
-          color="gray"
-          size={25}
-        ></Ionicons> */}
+      <View className="absolute z-50 items-center gap-x-2 flex-1 flex-row w-11/12 self-center top-8">
         <GooglePlacesAutocomplete
+          ref={queryRef}
           query={{
             key: GOOGLE_PLACES_API_KEY,
             language: "en",
             components: "country:id",
           }}
-          GooglePlacesSearchQuery={{
-            type: "restaurant",
-            location: `${region.latitude},${region.longitude}`,
-            radius: "10000",
-          }}
           returnKeyType={"default"}
           fetchDetails={true}
-          onPress={(data, details = null) => console.log(data, details)}
+          debounce={400}
+          onPress={(data, details = null) =>
+            setSearched({
+              location: details.geometry.location,
+              description: data.description,
+            })
+          }
           onFail={(error) => console.log(error)}
           onNotFound={() => console.log("no results")}
           listEmptyComponent={() => (
@@ -165,13 +153,18 @@ const MapScreen = ({ navigation }) => {
             placeholder: "Cari Restoran Soto Betawi?",
           }}
         />
+        <TouchableOpacity onPress={() => queryRef.current?.clear()}>
+          <Fontisto name="close-a" size={20} color={"gray"} />
+        </TouchableOpacity>
       </View>
       <View className="absolute bottom-24 self-center">
         <TouchableOpacity
           className="bg-blue-500 w-32 self-center text-center rounded-full mb-2"
-          onPress={() => goToKos()}
+          onPress={() => goToMarker()}
         >
-          <Text className="text-center text-lg text-white p-2">Go To Kos</Text>
+          <Text className="text-center text-lg text-white p-2">
+            Go To Marker
+          </Text>
         </TouchableOpacity>
         <View className="bg-white rounded-full opacity-50">
           <Text className="text-xl p-2 text-black">{`${region.latitude}, ${region.longitude}`}</Text>
@@ -229,5 +222,9 @@ const MapScreen = ({ navigation }) => {
     </>
   );
 };
+
+// TODO: Map through result array and retrieve the restaurants's location (and probably place_id buat further details with place details api)
+
+// { lat, lng } = results[i].geometry.location.lat, results[i].geometry.location.lng
 
 export default MapScreen;

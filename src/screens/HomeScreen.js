@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState, useContext } from "react";
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  SectionList,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AwesomeButton from "react-native-really-awesome-button-fixed";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { Fontisto } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { useCallback } from "react";
-import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { firebase } from "../../firebaseConfig";
+import { Context } from "../constants/noCycle";
+
+// TODO: Tambahin tombol di dummy build buat reset level abis selesai user (done!)
 
 const HomeScreen = ({ navigation }) => {
   const [c1, dc1] = ["#EF4444", "#DC2626"];
@@ -17,6 +22,7 @@ const HomeScreen = ({ navigation }) => {
   const lvlFont = "Anek-SXB";
 
   const [data, setData] = useState("");
+  const { unlock, setUnlock, betacoins, setBetacoins } = useContext(Context);
   // const [betacoins, setBetacoins] = useState(0);
   // const [levelProgress, setLevelProgress] = useState({
   //   levelProgress: { chapter: 1, stage: 1, substage: 1 },
@@ -52,13 +58,76 @@ const HomeScreen = ({ navigation }) => {
 
     fetchData();
   }, []);
+
+  const STAGE_BUTTONS = [
+    {
+      title: "Bab 1 | Pemula",
+      data: ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"],
+      index: 0,
+    },
+    {
+      title: "Bab 2 | Perantau",
+      data: ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"],
+      index: 1,
+    },
+    {
+      title: "Bab 3 | Pelajar",
+      data: ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"],
+      index: 2,
+    },
+    {
+      title: "Bab 4 | Pejuang",
+      data: ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"],
+      index: 3,
+    },
+    {
+      title: "Bab 5 | Pemberani",
+      data: ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"],
+      index: 4,
+    },
+    {
+      title: "Bab 6 | Pendekar",
+      data: ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"],
+      index: 5,
+    },
+  ];
+
+  const Item = ({ title, index }) => (
+    <AwesomeButton
+      stretch={true}
+      height={40}
+      borderRadius={50}
+      backgroundColor={unlock >= index ? c1 : "lightgray"}
+      backgroundDarker={unlock >= index ? dc1 : "darkgray"}
+      backgroundShadow={"#E8E8E8"}
+      disabled={unlock >= index ? false : true}
+      onPress={() => navigation.navigate("NoTabs", { level: index })}
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 10,
+      }}
+    >
+      <Text
+        style={{
+          fontFamily: "Anek-SXB",
+          alignSelf: "center",
+          color: "whitesmoke",
+          paddingTop: 5,
+        }}
+      >
+        {title}
+      </Text>
+    </AwesomeButton>
+  );
+
   return (
     <>
       <SafeAreaView className="flex-1 bg-red-500">
         <StatusBar style="auto" />
         <View className="bg-gray-50 flex-1">
           <View className=" h-14 flex-row bg-red-500 w-full justify-between items-center px-3">
-            <View className="flex-row items-center pl-3">
+            <View className="flex-row items-center">
               {data.firstName && (
                 <Text
                   style={{ fontFamily: "Anek-SXB" }}
@@ -88,7 +157,22 @@ const HomeScreen = ({ navigation }) => {
               </View>
             )}
           </View>
-          <ScrollView className="px-7">
+          <SectionList
+            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 80 }}
+            sections={STAGE_BUTTONS}
+            keyExtractor={(item, index) => item + index}
+            renderItem={({ item, index, section }) => (
+              <Item title={item} index={index + section.index * 6} />
+            )}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text
+                style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}
+              >
+                {title}
+              </Text>
+            )}
+          />
+          {/* <ScrollView className="px-7">
             <Text
               style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}
             >
@@ -869,7 +953,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-          </ScrollView>
+          </ScrollView> */}
         </View>
       </SafeAreaView>
     </>
