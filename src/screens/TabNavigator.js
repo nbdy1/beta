@@ -8,6 +8,7 @@ import RewardsScreen from "./RewardsScreen";
 import BookScreen from "./BookScreen";
 import MapScreen from "./MapScreen";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { COLORS } from "../constants/theme";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -16,14 +17,14 @@ const TabNavigator = ({ navigation }) => {
     <Tab.Navigator
       labeled={false}
       initialRouteName="Home"
-      activeColor="white"
+      activeColor={COLORS.primary}
       inactiveColor="whitesmoke"
       barStyle={{
         position: "absolute",
         bottom: 0,
         borderTopStartRadius: 5,
         borderTopEndRadius: 5,
-        backgroundColor: "#EF4444",
+        backgroundColor: COLORS.secondary,
         paddingTop: 5,
         paddingBottom: 5,
       }}
