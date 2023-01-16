@@ -19,11 +19,11 @@ export default function App() {
   const [user, setUser] = useState(null);
 
   const [fontsLoaded] = useFonts({
-    "Anek-R": require("./assets/fonts/AnekTelugu-Regular.ttf"),
-    "Anek-B": require("./assets/fonts/AnekTelugu-Bold.ttf"),
-    "Anek-EB": require("./assets/fonts/AnekTelugu-ExtraBold.ttf"),
-    "Anek-EXB": require("./assets/fonts/AnekTelugu_Expanded-Bold.ttf"),
-    "Anek-SXB": require("./assets/fonts/AnekTelugu_SemiExpanded-Bold.ttf"),
+    "epi-r": require("./assets/fonts/Epilogue-Regular.ttf"),
+    "epi-m": require("./assets/fonts/Epilogue-Medium.ttf"),
+    "epi-b": require("./assets/fonts/Epilogue-Bold.ttf"),
+    "epi-bl": require("./assets/fonts/Epilogue-Black.ttf"),
+    "righteous": require("./assets/fonts/Righteous-Regular.ttf"),
     // "Anek-CM": require("../../assets/fonts/AnekTelugu_Condensed-Medium.ttf"),
     // "Anek-SCB": require("../../assets/fonts/AnekTelugu_SemiCondensed-Bold.ttf"),
   });
