@@ -291,7 +291,7 @@ const StageScreen = ({ route, navigation }) => {
       return (
         <View>
           <Text
-            style={{ fontFamily: "Anek-B" }}
+            style={{ fontFamily: "epi-b" }}
             className={`${
               isKeyboardVisible ? "mb-3" : "mb-6"
             } mt-6 text-2xl text-black`}
@@ -299,14 +299,14 @@ const StageScreen = ({ route, navigation }) => {
             Isi kata yang kurang dari terjemahan kalimat berikut
           </Text>
           <Text
-            style={{ fontFamily: "Anek-B" }}
+            style={{ fontFamily: "epi-b" }}
             className={`${
               isKeyboardVisible ? "mb-1" : "mb-3"
             } text-lg text-blue-500`}
           >
             {allQuestions[currentQuestionIndex]?.from} ⬇️
           </Text>
-          <Text style={{ fontFamily: "Anek-B" }} className="text-lg text-black">
+          <Text style={{ fontFamily: "epi-b" }} className="text-lg text-black">
             {allQuestions[currentQuestionIndex]?.to}
           </Text>
         </View>
@@ -322,7 +322,7 @@ const StageScreen = ({ route, navigation }) => {
         </View> */}
         {/* Question */}
         <Text
-          style={{ fontFamily: "Anek-B" }}
+          style={{ fontFamily: "epi-b" }}
           className={` ${
             questionType == "new"
               ? "mt-8 text-4xl leading-[50px] text-purple-500 mb-6"
@@ -354,7 +354,7 @@ const StageScreen = ({ route, navigation }) => {
               } shadow-lg  flex-row justify-center items-center py-5 my-3`}
             >
               <Text
-                style={{ fontFamily: "Anek-R" }}
+                style={{ fontFamily: "epi-r" }}
                 className="text-xl mt-1 text-black px-5"
               >
                 {option}
@@ -368,7 +368,7 @@ const StageScreen = ({ route, navigation }) => {
       return (
         <View className="px-2 mt-10 mb-5">
           <TextInput
-            style={{ fontFamily: "Anek-R" }}
+            style={{ fontFamily: "epi-r" }}
             borderRadius={10}
             multiline={true}
             placeholder="Apa ya??"
@@ -388,7 +388,7 @@ const StageScreen = ({ route, navigation }) => {
             <View className="mb-2">
               <TextInput
                 className="h-12 pl-2 pt-3 text-xl w-20"
-                style={{ fontFamily: "Anek-R" }}
+                style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
                 multiline={false}
@@ -410,7 +410,7 @@ const StageScreen = ({ route, navigation }) => {
             <View className="mb-2">
               <TextInput
                 className="h-12 pl-2 pt-3 text-xl w-20"
-                style={{ fontFamily: "Anek-R" }}
+                style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
                 multiline={false}
@@ -423,7 +423,7 @@ const StageScreen = ({ route, navigation }) => {
             <View className="mb-2">
               <TextInput
                 className="h-12 pl-2 pt-3 text-xl w-20"
-                style={{ fontFamily: "Anek-R" }}
+                style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
                 multiline={false}
@@ -445,7 +445,7 @@ const StageScreen = ({ route, navigation }) => {
             <View className="mb-2">
               <TextInput
                 className="h-12 pl-2 pt-3 text-xl w-20"
-                style={{ fontFamily: "Anek-R" }}
+                style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
                 multiline={false}
@@ -458,7 +458,7 @@ const StageScreen = ({ route, navigation }) => {
             <View className="mb-2">
               <TextInput
                 className="h-12 pl-2 pt-3 text-xl w-20"
-                style={{ fontFamily: "Anek-R" }}
+                style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
                 multiline={false}
@@ -471,7 +471,7 @@ const StageScreen = ({ route, navigation }) => {
             <View className="mb-2">
               <TextInput
                 className="h-12 pl-2 pt-3 text-xl w-20"
-                style={{ fontFamily: "Anek-R" }}
+                style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
                 multiline={false}
@@ -498,14 +498,14 @@ const StageScreen = ({ route, navigation }) => {
                 className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
               >
                 <Text
-                  style={{ fontFamily: "Anek-B" }}
+                  style={{ fontFamily: "epi-b" }}
                   className="text-black text-2xl"
                 >
                   {value.new_word}
                 </Text>
                 {value.meaning && (
                   <Text
-                    style={{ fontFamily: "Anek-R" }}
+                    style={{ fontFamily: "epi-r" }}
                     className="text-black text-xl"
                   >
                     👉 berarti{" "}
@@ -517,7 +517,7 @@ const StageScreen = ({ route, navigation }) => {
                 )}
                 {value.same_with && (
                   <Text
-                    style={{ fontFamily: "Anek-R" }}
+                    style={{ fontFamily: "epi-r" }}
                     className="text-black text-xl"
                   >
                     🤝 sama dengan{" "}
@@ -528,7 +528,7 @@ const StageScreen = ({ route, navigation }) => {
                   </Text>
                 )}
                 <Text
-                  style={{ fontFamily: "Anek-R" }}
+                  style={{ fontFamily: "epi-r" }}
                   className="text-black text-xl"
                 >
                   <Text className="font-bold">Contoh: </Text> {value.example}
@@ -544,13 +544,13 @@ const StageScreen = ({ route, navigation }) => {
       //     className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
       //   >
       //     <Text
-      //       style={{ fontFamily: "Anek-B" }}
+      //       style={{ fontFamily: "epi-b" }}
       //       className="text-black text-2xl"
       //     >
       //       Ane
       //     </Text>
       //     <Text
-      //       style={{ fontFamily: "Anek-R" }}
+      //       style={{ fontFamily: "epi-r" }}
       //       className="text-black text-xl"
       //     >
       //       👉 berarti{" "}
@@ -558,7 +558,7 @@ const StageScreen = ({ route, navigation }) => {
       //       dalam Bahasa Indonesia
       //     </Text>
       //     <Text
-      //       style={{ fontFamily: "Anek-R" }}
+      //       style={{ fontFamily: "epi-r" }}
       //       className="text-black text-xl"
       //     >
       //       <Text className="font-bold">Contoh: </Text> Ane lagi di pasar.
@@ -569,13 +569,13 @@ const StageScreen = ({ route, navigation }) => {
       //     className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
       //   >
       //     <Text
-      //       style={{ fontFamily: "Anek-B" }}
+      //       style={{ fontFamily: "epi-b" }}
       //       className="text-black text-2xl"
       //     >
       //       Ente
       //     </Text>
       //     <Text
-      //       style={{ fontFamily: "Anek-R" }}
+      //       style={{ fontFamily: "epi-r" }}
       //       className="text-black text-xl"
       //     >
       //       👉 berarti{" "}
@@ -583,7 +583,7 @@ const StageScreen = ({ route, navigation }) => {
       //       dalam Bahasa Indonesia
       //     </Text>
       //     <Text
-      //       style={{ fontFamily: "Anek-R" }}
+      //       style={{ fontFamily: "epi-r" }}
       //       className="text-black text-xl"
       //     >
       //       <Text className="font-bold">Contoh: </Text> Ente gimana sih.
@@ -594,20 +594,20 @@ const StageScreen = ({ route, navigation }) => {
       //     className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
       //   >
       //     <Text
-      //       style={{ fontFamily: "Anek-B" }}
+      //       style={{ fontFamily: "epi-b" }}
       //       className="text-black text-2xl"
       //     >
       //       Die
       //     </Text>
       //     <Text
-      //       style={{ fontFamily: "Anek-R" }}
+      //       style={{ fontFamily: "epi-r" }}
       //       className="text-black text-xl"
       //     >
       //       👉 berarti <Text className="text-blue-700 font-bold">'dia'</Text>{" "}
       //       dalam Bahasa Indonesia
       //     </Text>
       //     <Text
-      //       style={{ fontFamily: "Anek-R" }}
+      //       style={{ fontFamily: "epi-r" }}
       //       className="text-black text-xl"
       //     >
       //       <Text className="font-bold">Contoh: </Text> Die lagi ke warung.
@@ -641,7 +641,7 @@ const StageScreen = ({ route, navigation }) => {
   //           } shadow-sm  flex-row justify-center items-center py-5 my-3`}
   //         >
   //           <Text
-  //             style={{ fontFamily: "Anek-R" }}
+  //             style={{ fontFamily: "epi-r" }}
   //             className="text-xl mt-1 text-black px-5"
   //           >
   //             {option}
@@ -657,8 +657,8 @@ const StageScreen = ({ route, navigation }) => {
   //     return (
   //       <View className="px-2 mt-10 mb-5">
   //         <TextInput
-  //           className="h-14 pl-2 pt-2 text-xl"
-  //           style={{ fontFamily: "Anek-R" }}
+  //           className="h-14 pl-2  text-xl"
+  //           style={{ fontFamily: "epi-r" }}
   //           height={60}
   //           borderRadius={10}
   //           multiline={true}
@@ -743,7 +743,7 @@ const StageScreen = ({ route, navigation }) => {
             onPress={() => checkAndModal(currentOptionSelected)}
           >
             <Text
-              style={{ fontFamily: "Anek-SXB" }}
+              style={{ fontFamily: "epi-bl" }}
               className={`pt-3 text-center text-white text-2xl`}
             >
               {`Cek Jawaban `}
@@ -771,7 +771,7 @@ const StageScreen = ({ route, navigation }) => {
             onPress={() => checkAndModal()}
           >
             <Text
-              style={{ fontFamily: "Anek-SXB" }}
+              style={{ fontFamily: "epi-bl" }}
               className={`pt-3 text-center text-white text-2xl`}
             >
               {`Cek Jawaban `}
@@ -796,7 +796,7 @@ const StageScreen = ({ route, navigation }) => {
               onPress={() => checkAndModal([blank1])}
             >
               <Text
-                style={{ fontFamily: "Anek-SXB" }}
+                style={{ fontFamily: "epi-bl" }}
                 className={`pt-3 text-center text-white text-2xl`}
               >
                 {`Cek Jawaban `}
@@ -820,7 +820,7 @@ const StageScreen = ({ route, navigation }) => {
               onPress={() => checkAndModal([blank1, blank2])}
             >
               <Text
-                style={{ fontFamily: "Anek-SXB" }}
+                style={{ fontFamily: "epi-bl" }}
                 className={`pt-3 text-center text-white text-2xl`}
               >
                 {`Cek Jawaban `}
@@ -846,7 +846,7 @@ const StageScreen = ({ route, navigation }) => {
               onPress={() => checkAndModal([blank1, blank2, blank3])}
             >
               <Text
-                style={{ fontFamily: "Anek-SXB" }}
+                style={{ fontFamily: "epi-bl" }}
                 className={`pt-3 text-center text-white text-2xl`}
               >
                 {`Cek Jawaban `}
@@ -869,7 +869,7 @@ const StageScreen = ({ route, navigation }) => {
             onPress={() => handleNext()}
           >
             <Text
-              style={{ fontFamily: "Anek-SXB" }}
+              style={{ fontFamily: "epi-bl" }}
               className={`pt-3 text-center text-white text-2xl`}
             >
               Ok
@@ -953,7 +953,7 @@ const StageScreen = ({ route, navigation }) => {
           </View>
           <View className="items-end mr-2">
             <Text
-              style={{ fontFamily: "Anek-SXB" }}
+              style={{ fontFamily: "epi-bl" }}
               className="text-black text-lg absolute top-5"
             >
               {currentQuestionIndex + 1} {"/"} {allQuestions.length}
@@ -1009,31 +1009,31 @@ const StageScreen = ({ route, navigation }) => {
           className="flex-1 justify-center items-center bg-slate-100"
         >
           <Text
-            style={{ fontFamily: "Anek-EB", fontSize: 48 }}
+            style={{ fontFamily: "epi-bl", fontSize: 48 }}
             className="tracking-widest"
           >
             Selesai!
           </Text>
           <View className="shadow-lg bg-white rounded-lg shadow-black">
             <Text
-              style={{ fontFamily: "Anek-EB", fontSize: 20 }}
-              className="bg-orange-200 w-36 px-4 text-orange-600 pt-2 rounded-t-lg"
+              style={{ fontFamily: "epi-bl", fontSize: 20 }}
+              className="bg-orange-200 w-36 px-4 text-orange-600  rounded-t-lg"
             >
               <FontAwesome5 name="clock" size={20} />
               {"  "}
               <Text>{"0:20"}</Text>
             </Text>
             <Text
-              style={{ fontFamily: "Anek-EB", fontSize: 20 }}
-              className="bg-green-200 w-36 px-4 text-green-600 pt-2 rounded-none"
+              style={{ fontFamily: "epi-bl", fontSize: 20 }}
+              className="bg-green-200 w-36 px-4 text-green-600  rounded-none"
             >
               <FontAwesome5 name="check-circle" size={20} />
               {"  "}
               {`${((score / pointQuestionsTotal) * 100).toFixed(2)}%`}
             </Text>
             <Text
-              style={{ fontFamily: "Anek-EB", fontSize: 20 }}
-              className="bg-blue-200 w-36 px-4 text-blue-600 pt-2 rounded-b-lg"
+              style={{ fontFamily: "epi-bl", fontSize: 20 }}
+              className="bg-blue-200 w-36 px-4 text-blue-600  rounded-b-lg"
             >
               <FontAwesome5 name="coins" size={20} /> {" +10"}
             </Text>
@@ -1045,7 +1045,7 @@ const StageScreen = ({ route, navigation }) => {
             onPress={() => updateBetacoins()}
           >
             <Text
-              style={{ fontFamily: "Anek-SXB" }}
+              style={{ fontFamily: "epi-bl" }}
               className="mt-1 py-2 px-5 text-center text-lg text-white"
             >
               <Ionicons name="home" color="white" size={30} />
@@ -1084,8 +1084,8 @@ const StageScreen = ({ route, navigation }) => {
             }}
           >
             <Text
-              style={{ fontFamily: "Anek-SXB" }}
-              className={`text-3xl pt-2 pl-1 ${
+              style={{ fontFamily: "epi-bl" }}
+              className={`text-3xl  pl-1 ${
                 isAnswerCorrect ? "text-lime-500" : "text-red-500"
               }`}
             >
@@ -1106,7 +1106,7 @@ const StageScreen = ({ route, navigation }) => {
               disabled={isNextDisabled}
             >
               <Text
-                style={{ fontFamily: "Anek-EXB" }}
+                style={{ fontFamily: "epi-bl" }}
                 className="mt-1 py-2 text-center text-lg text-white"
               >
                 Lanjut

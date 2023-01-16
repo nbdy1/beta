@@ -9,17 +9,23 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AwesomeButton from "react-native-really-awesome-button-fixed";
-import { FontAwesome5 } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
 import { firebase } from "../../firebaseConfig";
 import { Context } from "../constants/noCycle";
+import { COLORS } from "../constants/theme";
 
 // TODO: Tambahin tombol di dummy build buat reset level abis selesai user (done!)
 
 const HomeScreen = ({ navigation }) => {
   const [c1, dc1] = ["#EF4444", "#DC2626"];
-  const titleFont = "Anek-EB";
-  const lvlFont = "Anek-SXB";
+  const titleFont = "epi-b";
+  const lvlFont = "epi-m";
 
   const [data, setData] = useState("");
   const { unlock, setUnlock, betacoins, setBetacoins } = useContext(Context);
@@ -97,9 +103,9 @@ const HomeScreen = ({ navigation }) => {
       stretch={true}
       height={40}
       borderRadius={50}
-      backgroundColor={unlock >= index ? c1 : "lightgray"}
-      backgroundDarker={unlock >= index ? dc1 : "darkgray"}
-      backgroundShadow={"#E8E8E8"}
+      backgroundColor={unlock >= index ? COLORS.secondary : "lightgray"}
+      backgroundDarker={unlock >= index ? "forestgreen" : "darkgray"}
+      backgroundShadow={COLORS.shadow}
       disabled={unlock >= index ? false : true}
       onPress={() => navigation.navigate("NoTabs", { level: index })}
       style={{
@@ -110,10 +116,9 @@ const HomeScreen = ({ navigation }) => {
     >
       <Text
         style={{
-          fontFamily: "Anek-SXB",
+          fontFamily: "epi-b",
           alignSelf: "center",
-          color: "whitesmoke",
-          paddingTop: 5,
+          color: COLORS.white,
         }}
       >
         {title}
@@ -123,42 +128,83 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <>
-      <SafeAreaView className="flex-1 bg-red-500">
+      <SafeAreaView
+        style={{ backgroundColor: COLORS.white }}
+        className="flex-1"
+      >
         <StatusBar style="auto" />
-        <View className="bg-gray-50 flex-1">
-          <View className=" h-14 flex-row bg-red-500 w-full justify-between items-center px-3">
-            <View className="flex-row items-center">
-              {data.firstName && (
+        <View className="flex-1">
+          <View
+            style={{
+              backgroundColor: COLORS.white,
+              borderBottomColor: COLORS.secondary,
+              borderBottomWidth: 0,
+            }}
+            className=" h-14 flex-row w-full justify-between items-center px-3"
+          >
+            <View className="flex-row items-center ml-4">
+              <Ionicons name={"language"} size={20} color={COLORS.black} />
+              <Text
+                style={{ fontFamily: "epi-b", color: COLORS.black }}
+                className=" ml-2  text-xl"
+              >
+                Betawi
+              </Text>
+              {/* {data.firstName && (
                 <Text
-                  style={{ fontFamily: "Anek-SXB" }}
-                  className="text-gray-50 pt-2 text-2xl"
+                  style={{ fontFamily: "epi-m" }}
+                  className="text-gray-50  text-2xl"
                 >
                   👋 Halo, {data.firstName}
                 </Text>
-              )}
+              )} */}
               {/* <Fontisto name="flag" size={25} color={"#F9FAFB"} />
               <Text
                 style={{ fontFamily: lvlFont }}
-                className="text-gray-50 ml-3 mt-3 text-2xl"
+                className="text-gray-50 ml-2  text-2xl"
               >
                 | Pelajar
               </Text> */}
             </View>
-
-            {data.currency?.betacoins && (
-              <View className="flex-row items-center">
-                <FontAwesome5 name="coins" size={24} color="white" />
+            <View className="flex-row items-center">
+              <View className="flex-row items-center ml-4">
+                <FontAwesome5 name="fire" size={20} color={"orange"} />
                 <Text
-                  style={{ fontFamily: lvlFont }}
-                  className="text-gray-50 ml-3 mt-3 text-2xl"
+                  style={{ fontFamily: "epi-b", color: COLORS.black }}
+                  className=" ml-2  text-xl"
                 >
-                  {data.currency?.betacoins}
+                  5
                 </Text>
               </View>
-            )}
+              {data.currency?.betacoins && (
+                <View className="flex-row items-center ml-4">
+                  <FontAwesome5 name="coins" size={20} color={c1} />
+                  <Text
+                    style={{ fontFamily: "epi-b", color: COLORS.black }}
+                    className=" ml-2  text-xl"
+                  >
+                    {data.currency?.betacoins}
+                  </Text>
+                </View>
+              )}
+              <View className="flex-row items-center ml-4">
+                <FontAwesome5 name="bolt" size={20} color={"purple"} />
+                <Text
+                  style={{ fontFamily: "epi-b", color: COLORS.black }}
+                  className=" ml-2  text-xl"
+                >
+                  2/4
+                </Text>
+              </View>
+            </View>
           </View>
+
           <SectionList
-            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 80 }}
+            contentContainerStyle={{
+              paddingHorizontal: 20,
+              paddingBottom: 80,
+              backgroundColor: COLORS.primary,
+            }}
             sections={STAGE_BUTTONS}
             keyExtractor={(item, index) => item + index}
             renderItem={({ item, index, section }) => (
@@ -166,7 +212,13 @@ const HomeScreen = ({ navigation }) => {
             )}
             renderSectionHeader={({ section: { title } }) => (
               <Text
-                style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}
+                style={{
+                  fontFamily: titleFont,
+                  color: COLORS.background,
+                  fontSize: 30,
+                  marginTop: 30,
+                  marginBottom: 20,
+                }}
               >
                 {title}
               </Text>
@@ -189,16 +241,16 @@ const HomeScreen = ({ navigation }) => {
             >
               <Text
                 style={{
-                  fontFamily: "Anek-SXB",
+                  fontFamily: "epi-m",
                   alignSelf: "center",
-                  color: "whitesmoke",
+                  color: COLORS.white,
                   paddingTop: 5,
                 }}
               >
                 Level 1
               </Text>
             </AwesomeButton>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -210,9 +262,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -220,7 +272,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -230,9 +282,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -240,7 +292,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -251,9 +303,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -261,7 +313,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -272,9 +324,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -282,7 +334,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -293,9 +345,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -319,16 +371,16 @@ const HomeScreen = ({ navigation }) => {
             >
               <Text
                 style={{
-                  fontFamily: "Anek-SXB",
+                  fontFamily: "epi-m",
                   alignSelf: "center",
-                  color: "whitesmoke",
+                  color: COLORS.white,
                   paddingTop: 5,
                 }}
               >
                 Level 1
               </Text>
             </AwesomeButton>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -339,9 +391,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -349,7 +401,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -360,9 +412,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -370,7 +422,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -381,9 +433,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -391,7 +443,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -402,9 +454,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -412,7 +464,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -423,9 +475,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -449,16 +501,16 @@ const HomeScreen = ({ navigation }) => {
             >
               <Text
                 style={{
-                  fontFamily: "Anek-SXB",
+                  fontFamily: "epi-m",
                   alignSelf: "center",
-                  color: "whitesmoke",
+                  color: COLORS.white,
                   paddingTop: 5,
                 }}
               >
                 Level 1
               </Text>
             </AwesomeButton>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -469,9 +521,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -479,7 +531,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -490,9 +542,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -500,7 +552,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -511,9 +563,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -521,7 +573,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -532,9 +584,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -542,7 +594,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -553,9 +605,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -579,16 +631,16 @@ const HomeScreen = ({ navigation }) => {
             >
               <Text
                 style={{
-                  fontFamily: "Anek-SXB",
+                  fontFamily: "epi-m",
                   alignSelf: "center",
-                  color: "whitesmoke",
+                  color: COLORS.white,
                   paddingTop: 5,
                 }}
               >
                 Level 1
               </Text>
             </AwesomeButton>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -599,9 +651,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -609,7 +661,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -620,9 +672,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -630,7 +682,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -641,9 +693,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -651,7 +703,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -662,9 +714,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -672,7 +724,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -683,9 +735,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -709,16 +761,16 @@ const HomeScreen = ({ navigation }) => {
             >
               <Text
                 style={{
-                  fontFamily: "Anek-SXB",
+                  fontFamily: "epi-m",
                   alignSelf: "center",
-                  color: "whitesmoke",
+                  color: COLORS.white,
                   paddingTop: 5,
                 }}
               >
                 Level 1
               </Text>
             </AwesomeButton>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -729,9 +781,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -739,7 +791,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -750,9 +802,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -760,7 +812,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -771,9 +823,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -781,7 +833,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -792,9 +844,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -802,7 +854,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -813,9 +865,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -839,16 +891,16 @@ const HomeScreen = ({ navigation }) => {
             >
               <Text
                 style={{
-                  fontFamily: "Anek-SXB",
+                  fontFamily: "epi-m",
                   alignSelf: "center",
-                  color: "whitesmoke",
+                  color: COLORS.white,
                   paddingTop: 5,
                 }}
               >
                 Level 1
               </Text>
             </AwesomeButton>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -859,9 +911,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -869,7 +921,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -880,9 +932,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -890,7 +942,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -901,9 +953,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -911,7 +963,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3">
+            <View className="">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -922,9 +974,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -932,7 +984,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
               </AwesomeButton>
             </View>
-            <View className="mt-3 mb-20">
+            <View className=" mb-20">
               <AwesomeButton
                 stretch={true}
                 height={40}
@@ -943,9 +995,9 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Text
                   style={{
-                    fontFamily: "Anek-SXB",
+                    fontFamily: "epi-m",
                     alignSelf: "center",
-                    color: "whitesmoke",
+                    color: COLORS.white,
                     paddingTop: 5,
                   }}
                 >
@@ -989,8 +1041,8 @@ export default HomeScreen;
 //         <StatusBar style="auto" />
 //         <View className="bg-gray-50 flex-1">
 //           <View className="bg-red-500 h-14 flex-row w-full justify-end items-center px-3">
-//             <FontAwesome5 name="coins" size={24} color="white" />
-//             <Text className="text-gray-50 ml-3 text-2xl font-bold">355</Text>
+//             <FontAwesome5 name="coins" size={20} color="white" />
+//             <Text className="text-gray-50 ml-2 text-2xl font-bold">355</Text>
 //           </View>
 //           <View className="px-7">
 //             <Text className="text-3xl font-bold py-10 mb-10">
@@ -1006,7 +1058,7 @@ export default HomeScreen;
 //             >
 //               Level 1
 //             </AwesomeButton>
-//             <View className="mt-3">
+//             <View className="">
 //               <AwesomeButton
 //                 stretch={true}
 //                 height={40}
@@ -1021,7 +1073,7 @@ export default HomeScreen;
 //                 Level 2
 //               </AwesomeButton>
 //             </View>
-//             <View className="mt-3">
+//             <View className="">
 //               <AwesomeButton
 //                 stretch={true}
 //                 height={40}
@@ -1032,7 +1084,7 @@ export default HomeScreen;
 //                 Level 3
 //               </AwesomeButton>
 //             </View>
-//             <View className="mt-3">
+//             <View className="">
 //               <AwesomeButton
 //                 stretch={true}
 //                 height={40}
@@ -1043,7 +1095,7 @@ export default HomeScreen;
 //                 Level 4
 //               </AwesomeButton>
 //             </View>
-//             <View className="mt-3">
+//             <View className="">
 //               <AwesomeButton
 //                 stretch={true}
 //                 height={40}
@@ -1054,7 +1106,7 @@ export default HomeScreen;
 //                 Level 5
 //               </AwesomeButton>
 //             </View>
-//             <View className="mt-3">
+//             <View className="">
 //               <AwesomeButton
 //                 stretch={true}
 //                 height={40}

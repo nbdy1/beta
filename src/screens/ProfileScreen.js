@@ -57,8 +57,8 @@ const ProfileScreen = ({ navigation }) => {
   }, []);
 
   const [c1, dc1] = ["#EF4444", "#DC2626"];
-  const titleFont = "Anek-EB";
-  const lvlFont = "Anek-SXB";
+  const titleFont = "epi-b";
+  const lvlFont = "epi-r";
   const gradientOptions = [
     ["#8A2387", "#E94057", "#F27121"],
     ["#ED213A", "#93291E"],
@@ -177,13 +177,13 @@ const ProfileScreen = ({ navigation }) => {
               />
             )}
           </TouchableOpacity>
-          <Text style={{ fontFamily: "Anek-B" }} className="text-lg text-white">
+          <Text style={{ fontFamily: "epi-b" }} className="text-lg text-white">
             {name.firstName} {name.lastName}
           </Text>
           <View className="flex-row gap-x-1">
             <Fontisto name="flag" color={"#F9FAFB"} />
             <Text
-              style={{ fontFamily: "Anek-B" }}
+              style={{ fontFamily: "epi-b" }}
               className="text-sm text-gray-100"
             >
               Pemula

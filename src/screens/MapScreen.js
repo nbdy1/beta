@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -30,11 +30,16 @@ import * as Location from "expo-location";
 import { COLORS } from "../constants/theme";
 import * as SplashScreen from "expo-splash-screen";
 import StarRating from "../components/StageButton.js/StarRating";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { SIZES } from "../constants/theme";
 
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 250;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
+const BOTTOMSHEET_TITLE = SIZES.height * SIZES.base * 0.003;
+const BOTTOMSHEET_DESCRIPTION = SIZES.height * SIZES.base * 0.0025;
+const BUTTON_TEXT = SIZES.height * SIZES.base * 0.0025;
 
 const MapScreen = ({ navigation }) => {
   let mapIndex = 0;
@@ -161,6 +166,8 @@ const MapScreen = ({ navigation }) => {
       setLocation({
         latitude: getPos.coords.latitude,
         longitude: getPos.coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
       });
 
       SplashScreen.hideAsync();
@@ -203,6 +210,7 @@ const MapScreen = ({ navigation }) => {
   const mapRef = useRef(null);
   const scrollRef = useRef(null);
   const queryRef = useRef(null);
+  const bottomSheetRef = useRef(null);
 
   const [region, setRegion] = useState({
     latitude: -6.2,
@@ -232,6 +240,130 @@ const MapScreen = ({ navigation }) => {
     );
   };
 
+  const handleSheetChanges = useCallback((index) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  const snapPoints = useMemo(() => ["75%", "50%"], []);
+
+  const renderHeader = () => (
+    <View className="bg-yellow-300 border-b-2 border-slate-50 w-full h-auto py-2 items-center rounded-t-lg">
+      <View className="w-16 h-2 rounded-full bg-yellow-400"></View>
+    </View>
+  );
+
+  // const renderContent = () => (
+  //   <ScrollView className="bg-white p-5 pb-20 h-full">
+  //     <Text
+  //       style={{
+  //         fontSize: BOTTOMSHEET_TITLE,
+  //         fontFamily: "Anek-B",
+  //       }}
+  //     >
+  //       {searched.name}
+  //     </Text>
+  //     <StarRating
+  //       ratings={searched?.rating}
+  //       reviews={searched?.user_ratings_total}
+  //     />
+  //     {searched.photos ? (
+  //       <View className="py-4 my-4 h-48 border-slate-100 border-y-2">
+  //         <Image
+  //           className="h-full rounded-xl overflow-hidden"
+  //           source={{
+  //             uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${searched.photos[0].photo_reference}&key=${GOOGLE_PLACES_API_KEY}`,
+  //           }}
+  //           resizeMode={"cover"}
+  //         />
+  //       </View>
+  //     ) : (
+  //       <View className="my-4 h-40 border-y-2 border-slate-100">
+  //         <Image
+  //           className="h-full rounded-xl overflow-hidden my-5"
+  //           source={require("../../assets/images/no_image.png")}
+  //           resizeMode={"cover"}
+  //         />
+  //       </View>
+  //     )}
+  //     <ScrollView
+  //       horizontal
+  //       scrollEventThrottle={1}
+  //       showsHorizontalScrollIndicator={false}
+  //       height={40}
+  //       className="gap-x-3 pl-2"
+  //     >
+  //       <TouchableOpacity className="bg-green-500 border-2 justify-center border-green-500 px-3 py-1 items-center flex-row-reverse gap-x-2 rounded-full">
+  //         <Ionicons name="navigate" color={"#fff"} size={BUTTON_TEXT} />
+  //         <Text
+  //           style={{
+  //             fontFamily: "Anek-B",
+  //             color: "white",
+  //             fontSize: BUTTON_TEXT,
+  //           }}
+  //         >
+  //           Mulai
+  //         </Text>
+  //       </TouchableOpacity>
+  //       <TouchableOpacity className="bg-white border-2 justify-center border-slate-100 px-3 py-1 items-center flex-row-reverse gap-x-2 rounded-full">
+  //         <Ionicons name="navigate" size={BUTTON_TEXT} />
+  //         <Text
+  //           style={{
+  //             fontFamily: "Anek-B",
+  //             color: "white",
+  //             fontSize: BUTTON_TEXT,
+  //           }}
+  //         >
+  //           Telepon
+  //         </Text>
+  //       </TouchableOpacity>
+  //       <TouchableOpacity className="bg-white border-2 justify-center border-slate-100 px-3 py-1 items-center flex-row-reverse gap-x-2 rounded-full">
+  //         <Ionicons name="navigate" size={BUTTON_TEXT} />
+  //         <Text
+  //           style={{
+  //             fontFamily: "Anek-B",
+  //             color: "white",
+  //             fontSize: BUTTON_TEXT,
+  //           }}
+  //         >
+  //           Bagikan
+  //         </Text>
+  //       </TouchableOpacity>
+  //     </ScrollView>
+  //     {searched.reviews && (
+  //       <>
+  //         <Text
+  //           style={{
+  //             fontSize: BOTTOMSHEET_TITLE,
+  //             fontFamily: "Anek-B",
+  //             marginBottom: 10,
+  //           }}
+  //         >
+  //           Ulasan
+  //         </Text>
+  //         {searched.reviews.map((review, index) => {
+  //           return (
+  //             <View className="flex-row my-3" key={index}>
+  //               <View className="flex-1">
+  //                 <Image
+  //                   className="h-full"
+  //                   resizeMode={"cover"}
+  //                   source={{ uri: review.profile_photo_url }}
+  //                 />
+  //               </View>
+  //               <View className="flex-4">
+  //                 <Text numberOfLines={4}>{review.text}</Text>
+  //                 <Text>
+  //                   {review.author_name} · {review.relative_time_description}{" "}
+  //                 </Text>
+  //               </View>
+  //             </View>
+  //           );
+  //         })}
+  //       </>
+  //     )}
+  //   </ScrollView>
+  // );
+
   useEffect(() => {
     if (!location || !searched) return;
 
@@ -256,16 +388,15 @@ const MapScreen = ({ navigation }) => {
       }
     );
     console.log(searched.full);
+    // bottomSheetRef.current.snapTo(0);
   }, [location, searched]);
   return (
     <>
       {location && (
         <MapView
           customMapStyle={mapStyle}
-          initialRegion={region}
+          initialRegion={location}
           ref={mapRef}
-          onRegionChangeComplete={(region) => setRegion(region)}
-          region={region}
           className="flex-1"
         >
           {searched && (
@@ -283,6 +414,7 @@ const MapScreen = ({ navigation }) => {
               }}
             />
           )}
+
           {nearbyData &&
             nearbyData.results.map((result, index) => {
               const scaleStyle = {
@@ -334,6 +466,118 @@ const MapScreen = ({ navigation }) => {
           )}
         </MapView>
       )}
+      {searched && (
+        <BottomSheet
+          enableHandlePanningGesture={true}
+          ref={bottomSheetRef}
+          index={0}
+          snapPoints={[200, 500, 300]}
+          onChange={handleSheetChanges}
+        >
+          <BottomSheetScrollView
+            contentContainerStyle={{
+              backgroundColor: "white",
+              padding: 10,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: BOTTOMSHEET_TITLE,
+                fontFamily: "epi-b",
+              }}
+            >
+              {searched.name}
+            </Text>
+            <StarRating
+              ratings={searched?.rating}
+              reviews={searched?.user_ratings_total}
+            />
+            {searched.photos ? (
+              <View className="py-4 my-4 h-48 border-slate-100 border-y-2">
+                <Image
+                  className="h-full rounded-xl overflow-hidden"
+                  source={{
+                    uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${searched.photos[0].photo_reference}&key=${GOOGLE_PLACES_API_KEY}`,
+                  }}
+                  resizeMode={"cover"}
+                />
+              </View>
+            ) : (
+              <View className="my-4 h-40 border-y-2 border-slate-100">
+                <Image
+                  className="h-full rounded-xl overflow-hidden my-5"
+                  source={require("../../assets/images/no_image.png")}
+                  resizeMode={"cover"}
+                />
+              </View>
+            )}
+            <BottomSheetScrollView
+              horizontal
+              scrollEventThrottle={1}
+              showsHorizontalScrollIndicator={false}
+            >
+              <TouchableOpacity className="bg-green-500 border-2 justify-center border-green-500 px-3 pr-3 items-center flex-row-reverse gap-x-2 rounded-full">
+                <Ionicons name="navigate" color={"#fff"} size={BUTTON_TEXT} />
+                <Text
+                  style={{
+                    fontFamily: "epi-r",
+                    color: "white",
+                    fontSize: BUTTON_TEXT,
+                  }}
+                >
+                  Mulai
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity className="bg-white border-2 border-slate-100 px-3 my-0 items-center flex-row-reverse gap-x-2 rounded-full">
+                <Ionicons name="navigate" size={BUTTON_TEXT} />
+                <Text style={{ fontFamily: "epi-r", fontSize: BUTTON_TEXT }}>
+                  Telepon
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity className="bg-white border-2 border-slate-100 px-3 my-0 items-center flex-row-reverse gap-x-2 rounded-full">
+                <Ionicons name="navigate" size={BUTTON_TEXT} />
+                <Text style={{ fontFamily: "epi-r", fontSize: BUTTON_TEXT }}>
+                  Bagikan
+                </Text>
+              </TouchableOpacity>
+            </BottomSheetScrollView>
+            {searched.reviews && (
+              <>
+                <Text
+                  style={{
+                    fontSize: BOTTOMSHEET_TITLE,
+                    fontFamily: "epi-b",
+                    marginBottom: 10,
+                  }}
+                >
+                  Ulasan
+                </Text>
+                {searched.reviews.map((review, index) => {
+                  return (
+                    <View className="flex-row my-3" key={index}>
+                      <View className="flex-1">
+                        <Image
+                          className="h-full"
+                          resizeMode={"cover"}
+                          source={{ uri: review.profile_photo_url }}
+                        />
+                      </View>
+                      <View className="flex-4">
+                        <Text numberOfLines={4}>{review.text}</Text>
+                        <Text>
+                          {review.author_name} ·{" "}
+                          {review.relative_time_description}{" "}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })}
+              </>
+            )}
+          </BottomSheetScrollView>
+        </BottomSheet>
+      )}
+
       <View className="absolute z-50 items-center gap-x-2 flex-1 flex-row w-11/12 self-center top-8">
         <GooglePlacesAutocomplete
           ref={queryRef}
@@ -365,19 +609,19 @@ const MapScreen = ({ navigation }) => {
           <Fontisto name="close-a" size={20} color={"gray"} />
         </TouchableOpacity>
       </View>
-      <View className="absolute bottom-24 self-center">
-        {/* <TouchableOpacity
+      {/*<View className="absolute bottom-24 self-center">
+         <TouchableOpacity
           className="bg-blue-500 w-32 self-center text-center rounded-full mb-2"
           onPress={() => goToMarker()}
         >
           <Text className="text-center text-lg text-white p-2">
             Go To Marker
           </Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity> 
         <View className="bg-white rounded-full opacity-50">
           <Text className="text-md p-2 text-black">{`${region.latitude}, ${region.longitude}`}</Text>
         </View>
-      </View>
+        </View> */}
 
       <ScrollView
         horizontal
@@ -419,6 +663,7 @@ const MapScreen = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+
       {nearbyData && (
         <Animated.ScrollView
           ref={scrollRef}
@@ -426,7 +671,6 @@ const MapScreen = ({ navigation }) => {
           pagingEnabled
           scrollEventThrottle={1}
           showsHorizontalScrollIndicator={false}
-          snapToInterval={CARD_WIDTH + 20}
           snapToAlignment="center"
           style={styles.scrollView}
           contentInset={{
@@ -490,6 +734,32 @@ const MapScreen = ({ navigation }) => {
                 />
                 <View style={styles.button}>
                   <TouchableOpacity
+                    onPress={() => {
+                      setSearched(result);
+                      setNearbyData(false);
+                    }}
+                    style={[
+                      styles.signIn,
+                      {
+                        backgroundColor: COLORS.primary,
+                        borderColor: COLORS.primary,
+                        borderWidth: 1,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.textSign,
+                        {
+                          color: "white",
+                        },
+                      ]}
+                    >
+                      Kunjungi
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
                     onPress={() => {}}
                     style={[
                       styles.signIn,
@@ -507,7 +777,7 @@ const MapScreen = ({ navigation }) => {
                         },
                       ]}
                     >
-                      Pesan Sekarang
+                      Pesan
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -647,15 +917,19 @@ const styles = StyleSheet.create({
     height: 30,
   },
   button: {
+    flexDirection: "row",
     alignItems: "center",
     marginTop: 5,
+    paddingHorizontal: 0,
+    justifyContent: "center",
   },
   signIn: {
-    width: "100%",
+    width: "45%",
     padding: 5,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 3,
+    marginHorizontal: 5,
   },
   textSign: {
     fontSize: 14,

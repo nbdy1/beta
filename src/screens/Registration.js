@@ -66,7 +66,7 @@ const Registration = () => {
       <View className="flex-1 justify-center items-center bg-white">
         <Text
           style={{
-            fontFamily: "Anek-SXB",
+            fontFamily: "epi-bl",
             fontSize: 26,
             borderBottomWidth: 1,
             padding: 0,
@@ -109,12 +109,12 @@ const Registration = () => {
 
         <TouchableOpacity
           onPress={() => loginUser(email, password)}
-          className="bg-red-500 shadow-xl rounded-full mt-5 px-5 pt-2 shadow-red-500"
+          className="bg-red-500 shadow-xl rounded-full mt-5 px-5  shadow-red-500"
         >
           <Text
             onPress={() => registerUser(email, password, firstName, lastName)}
             className="text-white"
-            style={{ fontFamily: "Anek-B", fontSize: 16 }}
+            style={{ fontFamily: "epi-b", fontSize: 16 }}
           >
             Buat Akun
           </Text>

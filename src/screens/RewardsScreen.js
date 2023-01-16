@@ -16,8 +16,8 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const RewardsScreen = ({ navigation }) => {
   const [c1, dc1] = ["#EF4444", "#DC2626"];
-  const titleFont = "Anek-EB";
-  const lvlFont = "Anek-SXB";
+  const titleFont = "epi-bl";
+  const lvlFont = "epi-b";
   const REWARDS_DATA = [
     {
       id: "0",
@@ -105,7 +105,7 @@ const RewardsScreen = ({ navigation }) => {
       </View>
       <View className="flex-1 bg-gray-50 pl-3 w-full">
         <Text
-          style={{ fontFamily: "Anek-B" }}
+          style={{ fontFamily: "epi-m" }}
           className="text-black text-xl px-5 pb-5 pr-5 pt-5"
         >
           Kumpulkan poin untuk mendapatkan hadiah-hadiah seru!

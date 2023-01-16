@@ -26,21 +26,27 @@ const Login = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-secondary">
+    <SafeAreaView
+      style={{ backgroundColor: COLORS.primary }}
+      className="flex-1"
+    >
       <StatusBar style="auto" />
-      <View className="flex-1 justify-center items-center bg-secondary">
+      <View
+        style={{ backgroundColor: COLORS.primary }}
+        className="flex-1 justify-center items-center"
+      >
         <Text
           style={{
-            fontFamily: "Anek-SXB",
+            fontFamily: "righteous",
             fontSize: 32,
-            color: COLORS.white,
+            color: COLORS.secondary,
           }}
         >
           BetawithYou
         </Text>
         <Text
           style={{
-            fontFamily: "Anek-SXB",
+            fontFamily: "epi-b",
             fontSize: 24,
             color: COLORS.white,
           }}
@@ -65,13 +71,13 @@ const Login = () => {
         />
         <TouchableOpacity
           onPress={() => loginUser(email, password)}
-          className="bg-primary shadow-xl rounded-full mt-7 px-5 pt-2 shadow-white"
+          className="bg-white rounded-full mt-7 px-5 py-2"
         >
           <Text
             style={{
-              fontFamily: "Anek-B",
+              fontFamily: "epi-b",
               fontSize: 16,
-              color: COLORS.white,
+              color: COLORS.secondary,
             }}
           >
             Login
@@ -83,9 +89,9 @@ const Login = () => {
         >
           <Text
             style={{
-              fontFamily: "Anek-R",
+              fontFamily: "epi-r",
               fontSize: 14,
-              color: "white",
+              color: COLORS.white,
               textDecorationLine: "underline",
             }}
           >

@@ -7,7 +7,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import RewardsScreen from "./RewardsScreen";
 import BookScreen from "./BookScreen";
 import MapScreen from "./MapScreen";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { COLORS } from "../constants/theme";
 
 const Tab = createMaterialBottomTabNavigator();
@@ -18,15 +18,11 @@ const TabNavigator = ({ navigation }) => {
       labeled={false}
       initialRouteName="Home"
       activeColor={COLORS.primary}
-      inactiveColor="whitesmoke"
+      inactiveColor="forestgreen"
       barStyle={{
         position: "absolute",
         bottom: 0,
-        borderTopStartRadius: 5,
-        borderTopEndRadius: 5,
-        backgroundColor: COLORS.secondary,
-        paddingTop: 5,
-        paddingBottom: 5,
+        backgroundColor: COLORS.white,
       }}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
@@ -60,15 +56,15 @@ const TabNavigator = ({ navigation }) => {
               />
             );
           } else if (route.name === "Profile") {
-            iconName = focused ? "person" : "person-outline";
-            return <Ionicons name={iconName} size={size} color={color} />;
+            iconName = focused ? "person-fill" : "person";
+            return <Octicons name={iconName} size={size} color={color} />;
           }
 
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "whitesmoke",
-        tabBarInactiveTintColor: "whitesmoke",
+        tabBarActiveTintColor: COLORS.white,
+        tabBarInactiveTintColor: COLORS.white,
       })}
     >
       <Tab.Screen
