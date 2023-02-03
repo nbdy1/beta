@@ -9,26 +9,696 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AwesomeButton from "react-native-really-awesome-button-fixed";
+import Modal from "react-native-modal";
 import {
   FontAwesome,
   FontAwesome5,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
 import { firebase } from "../../firebaseConfig";
 import { Context } from "../constants/noCycle";
 import { COLORS } from "../constants/theme";
+import { LinearGradient } from "expo-linear-gradient";
+import { Badge } from "react-native-paper";
+import CountDown from "react-native-countdown-component";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import RankSvg from "../components/RankSvg";
 
 // TODO: Tambahin tombol di dummy build buat reset level abis selesai user (done!)
 
 const HomeScreen = ({ navigation }) => {
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: "first", title: "Lite" },
+    { key: "second", title: "Silver (-20%)" },
+    { key: "third", title: "Gold (-40%)" },
+  ]);
   const [c1, dc1] = ["#EF4444", "#DC2626"];
   const titleFont = "epi-b";
   const lvlFont = "epi-m";
 
   const [data, setData] = useState("");
   const { unlock, setUnlock, betacoins, setBetacoins } = useContext(Context);
+  const midnightSecond = () => {
+    let midnight = new Date();
+    midnight.setHours(24);
+    midnight.setMinutes(0);
+    midnight.setSeconds(0);
+    midnight.setMilliseconds(0);
+    return (midnight.getTime() - new Date().getTime()) / 1000;
+  };
+
+  const [showModal, setShowModal] = useState(false);
+
+  const FirstRoute = () => (
+    <>
+      <ScrollView
+        style={{
+          flex: 1,
+        }}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
+        <Text style={{ padding: 15, fontFamily: "epi-b", fontSize: 30 }}>
+          Beta Lite (1 Bulan)
+        </Text>
+        <Text style={{ paddingLeft: 15, fontFamily: "epi-b", fontSize: 20 }}>
+          IDR 49.999 / Bulan
+        </Text>
+        <View
+          className="gap-y-3"
+          style={{
+            backgroundColor: "#fff",
+            marginTop: 15,
+            width: "95%",
+            alignSelf: "center",
+            borderWidth: 1,
+            borderRadius: 15,
+            padding: 15,
+            overflow: "hidden",
+          }}
+        >
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="advertisements-off" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Hilangkan iklan
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Belajar, bermain, bereksplorasi, dan belanja tanpa gangguan
+                sedikitpun
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="hand-coin" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Dapat 10% lebih banyak Betacoins
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Hadiah Betacoins untuk setiap misi dan tantangan yang
+                terselesaikan ditingkat jadi 10% lebih banyak
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="battery-arrow-up" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Tambah 2 slot energi maksimal
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Belajar bahasa lokal favoritmu dengan sesi-sesi yang lebih
+                intensif
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="clock-fast" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Pulih energi 20% lebih cepat
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Balik ke sesi-sesi belajar bahasa lokal dengan lebih cepat
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="star-shooting" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{
+                  fontFamily: "epi-b",
+                  fontSize: 18,
+                  lineHeight: 20,
+                  marginBottom: 5,
+                }}
+              >
+                Dapat badge ekslusif "Culture Supporter"
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Tunjukki dukungan kamu pada aplikasi kami dengan gaya
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="handshake" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{
+                  fontFamily: "epi-b",
+                  fontSize: 18,
+                  lineHeight: 20,
+                  marginBottom: 5,
+                }}
+              >
+                Dukung kemajuan edukasi budaya lokal
+              </Text>
+              <Text
+                style={{ fontFamily: "epi-r", fontSize: 14, marginBottom: 10 }}
+              >
+                Bantu kami melestarikan budaya Indonesia
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View className="justify-center items-center my-8">
+          <MaterialCommunityIcons name={"clock-check-outline"} size={90} />
+          <Text
+            style={{
+              marginTop: 10,
+              fontFamily: "epi-b",
+              fontSize: 24,
+              marginBottom: 10,
+            }}
+          >
+            Bisa batal kapanpun
+          </Text>
+          <Text
+            className="text-center"
+            style={{
+              fontFamily: "epi-r",
+              fontSize: 18,
+              marginBottom: 10,
+            }}
+          >
+            Batal langganan kapanpun tanpa penalti ataupun biaya tambahan
+          </Text>
+        </View>
+      </ScrollView>
+      <View className="absolute bottom-0 flex-row w-full h-16 border-t bg-white justify-center items-center">
+        <TouchableOpacity
+          onPress={() => setShowModal(false)}
+          className={`rounded-lg h-12 px-2 py-1 mr-3 bg-red-500 border
+  `}
+        >
+          <Text
+            style={{ fontFamily: "epi-bl" }}
+            className="mt-1 px-5 text-center  text-lg text-white"
+          >
+            Beli Babe Lite
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className={` rounded-lg h-12 px-2 py-1 bg-white border
+  `}
+          onPress={() => setShowModal(false)}
+        >
+          <Text
+            style={{ fontFamily: "epi-bl" }}
+            className="mt-1 px-5 text-center text-lg text-black"
+          >
+            Nanti
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
+  const SecondRoute = () => (
+    <>
+      <ScrollView
+        style={{
+          flex: 1,
+        }}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
+        <Text style={{ padding: 15, fontFamily: "epi-b", fontSize: 30 }}>
+          Beta Silver (6 Bulan)
+        </Text>
+        <Text style={{ paddingLeft: 15, fontFamily: "epi-b", fontSize: 20 }}>
+          IDR 39.999 / Bulan
+        </Text>
+
+        <View
+          className="gap-y-3"
+          style={{
+            backgroundColor: "#fff",
+            marginTop: 15,
+            width: "95%",
+            alignSelf: "center",
+            borderWidth: 1,
+            borderRadius: 15,
+            padding: 15,
+            overflow: "hidden",
+          }}
+        >
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="advertisements-off" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Basmi iklan
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Belajar, bermain, bereksplorasi, dan belanja tanpa gangguan
+                sedikitpun
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="hand-coin" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Dapat 20% lebih banyak Betacoins
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Hadiah Betacoins untuk setiap misi dan tantangan yang
+                terselesaikan ditingkat jadi 20% lebih banyak
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="battery-arrow-up" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Tambah 4 slot energi maksimal
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Belajar bahasa lokal favoritmu dengan sesi-sesi yang lebih
+                intensif
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="clock-fast" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Pulih energi 35% lebih cepat
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Balik ke sesi-sesi belajar bahasa lokal dengan lebih cepat
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="star-shooting" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{
+                  fontFamily: "epi-b",
+                  fontSize: 18,
+                  lineHeight: 20,
+                  marginBottom: 5,
+                }}
+              >
+                Dapat badge ekslusif "Culture Hero"
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Tunjukki dukungan kamu pada aplikasi kami dengan gaya
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="handshake" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{
+                  fontFamily: "epi-b",
+                  fontSize: 18,
+                  lineHeight: 20,
+                  marginBottom: 5,
+                }}
+              >
+                Dukung kemajuan edukasi budaya lokal
+              </Text>
+              <Text
+                style={{ fontFamily: "epi-r", fontSize: 14, marginBottom: 10 }}
+              >
+                Bantu kami melestarikan budaya Indonesia
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View className="justify-center items-center my-8">
+          <MaterialCommunityIcons name={"clock-check-outline"} size={90} />
+          <Text
+            style={{
+              marginTop: 10,
+              fontFamily: "epi-b",
+              fontSize: 24,
+              marginBottom: 10,
+            }}
+          >
+            Bisa batal kapanpun
+          </Text>
+          <Text
+            className="text-center"
+            style={{
+              fontFamily: "epi-r",
+              fontSize: 18,
+              marginBottom: 10,
+            }}
+          >
+            Batal langganan kapanpun tanpa penalti ataupun biaya tambahan
+          </Text>
+        </View>
+      </ScrollView>
+      <View className="absolute bottom-0 flex-row w-full h-16 border-t bg-white justify-center items-center">
+        <TouchableOpacity
+          className={`rounded-lg h-12 px-2 py-1 mr-3 bg-gray-400 border
+  `}
+          onPress={() => setShowModal(false)}
+        >
+          <Text
+            style={{ fontFamily: "epi-bl" }}
+            className="mt-1 px-5 text-center  text-lg text-blue-50"
+          >
+            Beli Babe Silver
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className={` rounded-lg h-12 px-2 py-1 bg-white border
+  `}
+          onPress={() => setShowModal(false)}
+        >
+          <Text
+            style={{ fontFamily: "epi-bl" }}
+            className="mt-1 px-5 text-center text-lg text-black"
+          >
+            Nanti
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
+  const ThirdRoute = () => (
+    <>
+      <ScrollView
+        style={{
+          flex: 1,
+        }}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
+        <Text style={{ padding: 15, fontFamily: "epi-b", fontSize: 30 }}>
+          Beta Silver (12 Bulan)
+        </Text>
+        <Text style={{ paddingLeft: 15, fontFamily: "epi-b", fontSize: 20 }}>
+          IDR 29.999 / Bulan (PALING HEMAT)
+        </Text>
+        <View
+          className="gap-y-3"
+          style={{
+            backgroundColor: "#fff",
+            marginTop: 15,
+            width: "95%",
+            alignSelf: "center",
+            borderWidth: 1,
+            borderRadius: 15,
+            padding: 15,
+            overflow: "hidden",
+          }}
+        >
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="advertisements-off" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Basmi iklan
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Belajar, bermain, bereksplorasi, dan belanja tanpa gangguan
+                sedikitpun
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="hand-coin" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Dapat 25% lebih banyak Betacoins
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Hadiah Betacoins untuk setiap misi dan tantangan yang
+                terselesaikan ditingkat jadi 25% lebih banyak
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="battery-arrow-up" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Tambah 5 slot energi maksimal
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Belajar bahasa lokal favoritmu dengan sesi-sesi yang lebih
+                intensif
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="clock-fast" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
+              >
+                Pulih energi 50% lebih cepat
+              </Text>
+
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Balik ke sesi-sesi belajar bahasa lokal dengan lebih cepat
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="star-shooting" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{
+                  fontFamily: "epi-b",
+                  fontSize: 18,
+                  lineHeight: 20,
+                  marginBottom: 5,
+                }}
+              >
+                Dapat badge ekslusif "Culture Frontier"
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "epi-r",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  lineHeight: 18,
+                }}
+              >
+                Tunjukki dukungan kamu pada aplikasi kami dengan gaya
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4 items-center">
+            <MaterialCommunityIcons name="handshake" size={50} />
+            <View className="flex-shrink">
+              <Text
+                style={{
+                  fontFamily: "epi-b",
+                  fontSize: 18,
+                  lineHeight: 20,
+                  marginBottom: 5,
+                }}
+              >
+                Dukung kemajuan edukasi budaya lokal
+              </Text>
+              <Text
+                style={{ fontFamily: "epi-r", fontSize: 14, marginBottom: 10 }}
+              >
+                Bantu kami melestarikan budaya Indonesia
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View className="justify-center items-center my-8">
+          <MaterialCommunityIcons name={"clock-check-outline"} size={90} />
+          <Text
+            style={{
+              marginTop: 10,
+              fontFamily: "epi-b",
+              fontSize: 24,
+              marginBottom: 10,
+            }}
+          >
+            Bisa batal kapanpun
+          </Text>
+          <Text
+            className="text-center"
+            style={{
+              fontFamily: "epi-r",
+              fontSize: 18,
+              marginBottom: 10,
+            }}
+          >
+            Batal langganan kapanpun tanpa penalti ataupun biaya tambahan
+          </Text>
+        </View>
+      </ScrollView>
+      <View className="absolute bottom-0 flex-row w-full h-16 border-t bg-white justify-center items-center">
+        <TouchableOpacity
+          className={`rounded-lg h-12 px-2 py-1 mr-3 bg-yellow-500 border
+  `}
+          onPress={() => setShowModal(false)}
+        >
+          <Text
+            style={{ fontFamily: "epi-bl" }}
+            className="mt-1 px-5 text-center  text-lg text-white"
+          >
+            Beli Babe Gold
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className={` rounded-lg h-12 px-2 py-1 bg-white border
+  `}
+          onPress={() => setShowModal(false)}
+        >
+          <Text
+            style={{ fontFamily: "epi-bl" }}
+            className="mt-1 px-5 text-center text-lg text-black"
+          >
+            Nanti
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
+  const renderScene = SceneMap({
+    first: FirstRoute,
+    second: SecondRoute,
+    third: ThirdRoute,
+  });
+
   // const [betacoins, setBetacoins] = useState(0);
   // const [levelProgress, setLevelProgress] = useState({
   //   levelProgress: { chapter: 1, stage: 1, substage: 1 },
@@ -128,15 +798,75 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <>
-      <SafeAreaView
-        style={{ backgroundColor: COLORS.white }}
-        className="flex-1"
-      >
+      <SafeAreaView style={{ backgroundColor: "#fff" }} className="flex-1">
         <StatusBar style="auto" />
+        <Modal
+          hasBackdrop={true}
+          backdropOpacity={0.5}
+          isVisible={showModal}
+          className="flex-1 border m-0 justify-center items-center"
+        >
+          <View className="relative h-full w-full rounded-lg bg-primary">
+            <View className="w-full justify-center items-center bg-white py-5 h-72 flex-row">
+              <RankSvg name="Bronze" width={100} height={100} />
+              <RankSvg name="Silver" width={100} height={100} />
+              <RankSvg name="Gold" width={100} height={100} />
+            </View>
+            <TabView
+              renderTabBar={(props) => (
+                <TabBar
+                  {...props}
+                  indicatorStyle={{ backgroundColor: "white" }}
+                  tabStyle={{
+                    backgroundColor: "black",
+                    minHeight: 45,
+                  }} // here
+                  renderLabel={({ route, focused, color }) => (
+                    <Text
+                      style={{
+                        color,
+                        marginHorizontal: 8,
+                        marginTop: 4,
+                        fontFamily: "epi-b",
+                      }}
+                    >
+                      {route.title}
+                    </Text>
+                  )}
+                />
+              )}
+              navigationState={{ index, routes }}
+              renderScene={renderScene}
+              onIndexChange={setIndex}
+            />
+
+            <View
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 15,
+                backgroundColor: "#fff",
+                paddingHorizontal: 8,
+                borderRadius: 5,
+                borderWidth: 1,
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: "righteous",
+                  fontSize: 24,
+                  color: "black",
+                }}
+              >
+                BABE
+              </Text>
+            </View>
+          </View>
+        </Modal>
         <View className="flex-1">
           <View
             style={{
-              backgroundColor: COLORS.white,
+              backgroundColor: "#fff",
               borderBottomColor: COLORS.secondary,
               borderBottomWidth: 0,
             }}
@@ -198,32 +928,105 @@ const HomeScreen = ({ navigation }) => {
               </View>
             </View>
           </View>
-
-          <SectionList
-            contentContainerStyle={{
-              paddingHorizontal: 20,
-              paddingBottom: 80,
-              backgroundColor: COLORS.primary,
-            }}
-            sections={STAGE_BUTTONS}
-            keyExtractor={(item, index) => item + index}
-            renderItem={({ item, index, section }) => (
-              <Item title={item} index={index + section.index * 6} />
-            )}
-            renderSectionHeader={({ section: { title } }) => (
-              <Text
+          <View className="bg-white border-t py-2  border-b px-6 flex-row items-center justify-center">
+            <View className="relative flex-row items-center gap-x-3">
+              <Badge
                 style={{
-                  fontFamily: titleFont,
-                  color: COLORS.background,
-                  fontSize: 30,
-                  marginTop: 30,
-                  marginBottom: 20,
+                  borderRadius: 6,
+                  fontFamily: "epi-b",
+                  right: -20,
+                  top: -5,
+                  backgroundColor: "#F72F2F",
                 }}
+                className="absolute z-10"
               >
-                {title}
-              </Text>
-            )}
-          />
+                -40%
+              </Badge>
+              <CountDown
+                until={midnightSecond()}
+                size={12}
+                digitStyle={{
+                  backgroundColor: "white",
+                  borderColor: "#F72F2F",
+                  borderWidth: 2,
+                }}
+                digitTxtStyle={{
+                  color: "#F72F2F",
+                  fontSize: 14,
+                  fontWeight: "bold",
+                }}
+                timeToShow={["H", "M", "S"]}
+                showSeparator={true}
+                separatorStyle={{ color: "#F72F2F" }}
+                timeLabelStyle={{ display: "none" }}
+              />
+              <TouchableOpacity
+                className="border rounded-lg overflow-hidden"
+                onPress={() => setShowModal(true)}
+              >
+                <LinearGradient
+                  colors={["gold", "goldenrod"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                  }}
+                >
+                  <Text style={{ fontFamily: "epi-b", color: COLORS.black }}>
+                    Aktivasikan Babe
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View>
+            <View className="absolute z-10 right-0 top-10 w-14 h-14 bg-primary border border-r-0 rounded-l-lg items-center justify-center">
+              <FontAwesome5 name={"scroll"} size={30} color="#f5f5f5" />
+            </View>
+            <View className="absolute z-10 right-0 top-28 w-14 h-14 bg-primary border border-r-0 rounded-l-lg items-center justify-center">
+              <MaterialIcons
+                name={"leaderboard"}
+                size={30}
+                color="forestgreen"
+              />
+            </View>
+            <SectionList
+              contentContainerStyle={{
+                paddingBottom: 80,
+                backgroundColor: COLORS.primary,
+              }}
+              sections={STAGE_BUTTONS}
+              stickySectionHeadersEnabled={false}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({ item, index, section }) => (
+                <Item title={item} index={index + section.index * 6} />
+              )}
+              renderSectionHeader={({ section: { title } }) => (
+                <View
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: COLORS.background,
+                    backgroundColor: COLORS.secondary,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: titleFont,
+                      color: COLORS.background,
+
+                      fontSize: 24,
+                      marginTop: 30,
+                      marginBottom: 20,
+                    }}
+                  >
+                    {title}
+                  </Text>
+                </View>
+              )}
+            ></SectionList>
+          </View>
+
           {/* <ScrollView className="px-7">
             <Text
               style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}

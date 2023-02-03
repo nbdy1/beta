@@ -9,20 +9,26 @@ import BookScreen from "./BookScreen";
 import MapScreen from "./MapScreen";
 import { Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { COLORS } from "../constants/theme";
+import ExploreScreen from "./ExploreScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 
 const TabNavigator = ({ navigation }) => {
   return (
     <Tab.Navigator
+      backBehavior="none"
       labeled={false}
       initialRouteName="Home"
       activeColor={COLORS.primary}
       inactiveColor="forestgreen"
+      shifting={true}
+      tabBarColor={COLORS.secondary}
       barStyle={{
         position: "absolute",
         bottom: 0,
-        backgroundColor: COLORS.white,
+        backgroundColor: "white",
+        borderTopColor: COLORS.divider,
+        borderTopWidth: 1,
       }}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
@@ -44,7 +50,7 @@ const TabNavigator = ({ navigation }) => {
           } else if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
             return <Ionicons name={iconName} size={size} color={color} />;
-          } else if (route.name === "Map") {
+          } else if (route.name === "Explore") {
             iconName = focused
               ? "map-marker-radius"
               : "map-marker-radius-outline";
@@ -85,8 +91,8 @@ const TabNavigator = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name="Map"
-        component={MapScreen}
+        name="Explore"
+        component={ExploreScreen}
         options={{ headerShown: false }}
       />
       <Tab.Screen

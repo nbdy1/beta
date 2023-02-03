@@ -32,20 +32,31 @@ import * as SplashScreen from "expo-splash-screen";
 import StarRating from "../components/StageButton.js/StarRating";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { SIZES } from "../constants/theme";
+import { IconButton, Searchbar } from "react-native-paper";
+import {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
+import { PanGestureHandler } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
-const CARD_HEIGHT = 250;
+const CARD_HEIGHT = 240;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 const BOTTOMSHEET_TITLE = SIZES.height * SIZES.base * 0.003;
 const BOTTOMSHEET_DESCRIPTION = SIZES.height * SIZES.base * 0.0025;
-const BUTTON_TEXT = SIZES.height * SIZES.base * 0.0025;
+const BUTTON_TEXT = SIZES.height * SIZES.base * 0.002;
+
+// TODO: kalau ada waktu sisa banyak, coba ganti component autocomplete jadi text search biar bisa terdekat langsung gitu.
+// TODO: biar ada review untuk hasil dari nearby, search pake place id terus baru setsearched carian itu.
+// TODO: react-native-skia
 
 const MapScreen = ({ navigation }) => {
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
 
   const [nearbyData, setNearbyData] = useState(false);
+  const [showChip, setShowChip] = useState(false);
 
   useEffect(() => {
     if (!nearbyData) return;
@@ -73,7 +84,7 @@ const MapScreen = ({ navigation }) => {
               latitudeDelta: 0.065,
               longitudeDelta: 0.065,
             },
-            350
+            1000
           );
         }
       }, 10);
@@ -173,6 +184,32 @@ const MapScreen = ({ navigation }) => {
       SplashScreen.hideAsync();
     })();
   }, []);
+  const translateY = useSharedValue(0);
+  const lastContentOffset = useSharedValue(0);
+  const isScrolling = useSharedValue(false);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      if (
+        lastContentOffset.value > event.contentOffset.y &&
+        isScrolling.value
+      ) {
+        console.log("scrolling up");
+      } else if (
+        lastContentOffset.value < event.contentOffset.y &&
+        isScrolling.value
+      ) {
+        console.log("scrolling down");
+      }
+      lastContentOffset.value = event.contentOffset.y;
+    },
+    onBeginDrag: (e) => {
+      isScrolling.value = true;
+    },
+    onEndDrag: (e) => {
+      isScrolling.value = false;
+    },
+  });
 
   const nearbySearchShortcuts = {
     categories: [
@@ -203,6 +240,39 @@ const MapScreen = ({ navigation }) => {
         ),
         keyword: "ketoprak",
       },
+      {
+        name: "Gado-gado",
+        icon: (
+          <MaterialCommunityIcons
+            name="food-takeout-box-outline"
+            color="gray"
+            size={15}
+          />
+        ),
+        keyword: "gado",
+      },
+      {
+        name: "Lontong Sayur",
+        icon: (
+          <MaterialCommunityIcons
+            name="food-takeout-box-outline"
+            color="gray"
+            size={15}
+          />
+        ),
+        keyword: "lontong%20sayur",
+      },
+      {
+        name: "Soto Tangkar",
+        icon: (
+          <MaterialCommunityIcons
+            name="food-takeout-box-outline"
+            color="gray"
+            size={15}
+          />
+        ),
+        keyword: "soto%20tangkar",
+      },
     ],
   };
   const GOOGLE_PLACES_API_KEY = "AIzaSyCyeDateDsBDejZGNVX3B5IxYHD7a7WLEg";
@@ -227,6 +297,8 @@ const MapScreen = ({ navigation }) => {
   });
 
   const [searched, setSearched] = useState(false);
+  const [travelTimeCar, setTravelTimeCar] = useState(false);
+  const [travelTimeWalk, setTravelTimeWalk] = useState(false);
 
   const goToMarker = () => {
     mapRef.current.animateToRegion(
@@ -267,7 +339,7 @@ const MapScreen = ({ navigation }) => {
   //       reviews={searched?.user_ratings_total}
   //     />
   //     {searched.photos ? (
-  //       <View className="py-4 my-4 h-48 border-slate-100 border-y-2">
+  //       <View className="py-4 my-4 h-48  border-y">
   //         <Image
   //           className="h-full rounded-xl overflow-hidden"
   //           source={{
@@ -277,7 +349,7 @@ const MapScreen = ({ navigation }) => {
   //         />
   //       </View>
   //     ) : (
-  //       <View className="my-4 h-40 border-y-2 border-slate-100">
+  //       <View className="my-4 h-40 border-y ">
   //         <Image
   //           className="h-full rounded-xl overflow-hidden my-5"
   //           source={require("../../assets/images/no_image.png")}
@@ -292,7 +364,7 @@ const MapScreen = ({ navigation }) => {
   //       height={40}
   //       className="gap-x-3 pl-2"
   //     >
-  //       <TouchableOpacity className="bg-green-500 border-2 justify-center border-green-500 px-3 py-1 items-center flex-row-reverse gap-x-2 rounded-full">
+  //       <TouchableOpacity className="bg-green-500 border justify-center border-green-500 px-3 py-1 items-center flex-row-reverse gap-x-2 rounded-full">
   //         <Ionicons name="navigate" color={"#fff"} size={BUTTON_TEXT} />
   //         <Text
   //           style={{
@@ -304,7 +376,7 @@ const MapScreen = ({ navigation }) => {
   //           Mulai
   //         </Text>
   //       </TouchableOpacity>
-  //       <TouchableOpacity className="bg-white border-2 justify-center border-slate-100 px-3 py-1 items-center flex-row-reverse gap-x-2 rounded-full">
+  //       <TouchableOpacity className="bg-white border justify-center  px-3 py-1 items-center flex-row-reverse gap-x-2 rounded-full">
   //         <Ionicons name="navigate" size={BUTTON_TEXT} />
   //         <Text
   //           style={{
@@ -316,7 +388,7 @@ const MapScreen = ({ navigation }) => {
   //           Telepon
   //         </Text>
   //       </TouchableOpacity>
-  //       <TouchableOpacity className="bg-white border-2 justify-center border-slate-100 px-3 py-1 items-center flex-row-reverse gap-x-2 rounded-full">
+  //       <TouchableOpacity className="bg-white border justify-center  px-3 py-1 items-center flex-row-reverse gap-x-2 rounded-full">
   //         <Ionicons name="navigate" size={BUTTON_TEXT} />
   //         <Text
   //           style={{
@@ -351,7 +423,7 @@ const MapScreen = ({ navigation }) => {
   //                 />
   //               </View>
   //               <View className="flex-4">
-  //                 <Text numberOfLines={4}>{review.text}</Text>
+  //                 <Text numberOfLines={6}>{review.text}</Text>
   //                 <Text>
   //                   {review.author_name} · {review.relative_time_description}{" "}
   //                 </Text>
@@ -363,6 +435,15 @@ const MapScreen = ({ navigation }) => {
   //     )}
   //   </ScrollView>
   // );
+  const handlePan = (evt) => {
+    const { nativeEvent } = evt;
+
+    if (nativeEvent.velocityX > 0) {
+      console.log("Swipe right");
+    } else {
+      console.log("Swipe left");
+    }
+  };
 
   useEffect(() => {
     if (!location || !searched) return;
@@ -382,7 +463,7 @@ const MapScreen = ({ navigation }) => {
         edgePadding: {
           top: 50,
           right: 50,
-          bottom: 200,
+          bottom: 220,
           left: 50,
         },
       }
@@ -390,94 +471,145 @@ const MapScreen = ({ navigation }) => {
     console.log(searched.full);
     // bottomSheetRef.current.snapTo(0);
   }, [location, searched]);
+
+  useEffect(() => {
+    if (!location || !searched) return;
+
+    const getTravelTime = async () => {
+      fetch(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${location.latitude}%2C${location.longitude}&destinations=${searched.geometry.location.lat}%2C${searched.geometry.location.lng}&language=id&key=${GOOGLE_PLACES_API_KEY}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          console.dir(data, { maxArrayLength: null });
+          setTravelTimeCar(data.rows[0].elements[0]);
+        });
+      fetch(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${location.latitude}%2C${location.longitude}&destinations=${searched.geometry.location.lat}%2C${searched.geometry.location.lng}&language=id&mode=walking&key=${GOOGLE_PLACES_API_KEY}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          console.dir(data, { maxArrayLength: null });
+          setTravelTimeWalk(data.rows[0].elements[0]);
+        });
+    };
+
+    getTravelTime();
+  }, [location, searched]);
   return (
     <>
       {location && (
-        <MapView
-          customMapStyle={mapStyle}
-          initialRegion={location}
-          ref={mapRef}
-          className="flex-1"
+        <Animated.ScrollView
+          // TODO: just use a button man this handler thing ain't working.
+          onScroll={console.log("hi")}
+          contentContainerStyle={{ flex: 1 }}
         >
-          {searched && (
-            <MapViewDirections
-              apikey="AIzaSyCyeDateDsBDejZGNVX3B5IxYHD7a7WLEg"
-              strokeWidth={5}
-              strokeColor={COLORS.secondary}
-              origin={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-              }}
-              destination={{
-                latitude: searched.geometry.location.lat,
-                longitude: searched.geometry.location.lng,
-              }}
-            />
-          )}
-
-          {nearbyData &&
-            nearbyData.results.map((result, index) => {
-              const scaleStyle = {
-                transform: [
-                  {
-                    scale: interpolations[index].scale,
-                  },
-                ],
-              };
-              return (
-                <Marker
-                  key={index}
-                  coordinate={{
-                    latitude: result.geometry.location.lat,
-                    longitude: result.geometry.location.lng,
-                  }}
-                  title={result.name}
-                  onPress={(e) => onMarkerPress(e)}
-                  description={result.vicinity}
-                  identifier={`nd-${index}`}
-                  icon={require("../../assets/markers/food.png")}
-                />
-              );
-            })}
-          {searched && (
-            <>
-              <Marker
-                coordinate={{
+          <MapView
+            customMapStyle={mapStyle}
+            initialRegion={location}
+            ref={mapRef}
+            className="flex-1"
+          >
+            {searched && (
+              <MapViewDirections
+                apikey="AIzaSyCyeDateDsBDejZGNVX3B5IxYHD7a7WLEg"
+                strokeWidth={5}
+                strokeColor={COLORS.secondary}
+                origin={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                }}
+                destination={{
                   latitude: searched.geometry.location.lat,
                   longitude: searched.geometry.location.lng,
                 }}
-                title={searched.name}
-                description={searched.vicinity}
-                identifier="searched"
-                icon={require("../../assets/markers/food.png")}
-              ></Marker>
-            </>
-          )}
-          {location && (
-            <Marker
-              title={"Kamu"}
-              identifier={"origin"}
-              coordinate={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-              }}
-              image={require("../../assets/markers/you.png")}
-            />
-          )}
-        </MapView>
+              />
+            )}
+
+            {nearbyData &&
+              nearbyData.results.map((result, index) => {
+                const scaleStyle = {
+                  transform: [
+                    {
+                      scale: interpolations[index].scale,
+                    },
+                  ],
+                };
+                return (
+                  <Marker
+                    key={index}
+                    coordinate={{
+                      latitude: result.geometry.location.lat,
+                      longitude: result.geometry.location.lng,
+                    }}
+                    title={result.name}
+                    onPress={(e) => onMarkerPress(e)}
+                    description={result.vicinity}
+                    identifier={`nd-${index}`}
+                    icon={require("../../assets/markers/food.png")}
+                  />
+                );
+              })}
+            {searched && (
+              <>
+                <Marker
+                  coordinate={{
+                    latitude: searched.geometry.location.lat,
+                    longitude: searched.geometry.location.lng,
+                  }}
+                  title={searched.name}
+                  description={searched.vicinity}
+                  identifier="searched"
+                  icon={require("../../assets/markers/food.png")}
+                ></Marker>
+              </>
+            )}
+            {location && (
+              <Marker
+                title={"Kamu"}
+                identifier={"origin"}
+                coordinate={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                }}
+                image={require("../../assets/markers/you.png")}
+              />
+            )}
+          </MapView>
+        </Animated.ScrollView>
       )}
+      {/* <TouchableOpacity className="absolute bottom-20 left-5">
+        <Text>Hi</Text>
+      </TouchableOpacity> */}
       {searched && (
         <BottomSheet
-          enableHandlePanningGesture={true}
+          enableContentPanningGesture={false}
+          enableOverDrag={false}
+          overDragResistanceFactor={0.2}
           ref={bottomSheetRef}
-          index={0}
-          snapPoints={[200, 500, 300]}
+          index={2}
+          handleStyle={{
+            height: 30,
+            borderWidth: 1,
+            borderBottomWidth: 1,
+            backgroundColor: COLORS.primary,
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+          }}
+          handleIndicatorStyle={{
+            width: 50,
+          }}
+          snapPoints={["10%", "25%", "50%", "75%"]}
           onChange={handleSheetChanges}
+          animateOnMount={true}
         >
           <BottomSheetScrollView
             contentContainerStyle={{
               backgroundColor: "white",
               padding: 10,
+              borderLeftWidth: 1,
+              borderRightWidth: 1,
+              paddingBottom: 70,
             }}
           >
             <Text
@@ -492,8 +624,41 @@ const MapScreen = ({ navigation }) => {
               ratings={searched?.rating}
               reviews={searched?.user_ratings_total}
             />
+            {travelTimeCar && travelTimeWalk ? (
+              <View className="flex-row items-center">
+                <Text
+                  style={{ fontFamily: "epi-r" }}
+                  className="text-slate-600"
+                >
+                  {travelTimeCar?.distance.text} |{" "}
+                </Text>
+                <MaterialIcons name="drive-eta" color={"#334155"} size={15} />
+                <Text
+                  style={{ fontFamily: "epi-r" }}
+                  className="text-slate-600"
+                >
+                  {" "}
+                  {travelTimeCar?.duration.text} |
+                </Text>
+                <MaterialIcons
+                  name="directions-walk"
+                  color={"#334155"}
+                  size={15}
+                />
+                <Text
+                  style={{ fontFamily: "epi-r" }}
+                  className="text-slate-600"
+                >
+                  {" "}
+                  {travelTimeWalk?.duration.text}
+                </Text>
+              </View>
+            ) : (
+              ""
+            )}
+
             {searched.photos ? (
-              <View className="py-4 my-4 h-48 border-slate-100 border-y-2">
+              <View className="py-4 my-4 h-48  border-y">
                 <Image
                   className="h-full rounded-xl overflow-hidden"
                   source={{
@@ -503,7 +668,7 @@ const MapScreen = ({ navigation }) => {
                 />
               </View>
             ) : (
-              <View className="my-4 h-40 border-y-2 border-slate-100">
+              <View className="my-4 h-40 border-y ">
                 <Image
                   className="h-full rounded-xl overflow-hidden my-5"
                   source={require("../../assets/images/no_image.png")}
@@ -512,11 +677,16 @@ const MapScreen = ({ navigation }) => {
               </View>
             )}
             <BottomSheetScrollView
+              contentContainerStyle={{
+                width: "100%",
+                justifyContent: "space-evenly",
+                paddingBottom: 20,
+              }}
+              style={{ borderBottomWidth: 1, borderBottomColor: COLORS.black }}
               horizontal
-              scrollEventThrottle={1}
               showsHorizontalScrollIndicator={false}
             >
-              <TouchableOpacity className="bg-green-500 border-2 justify-center border-green-500 px-3 pr-3 items-center flex-row-reverse gap-x-2 rounded-full">
+              <TouchableOpacity className="bg-green-500 border justify-center px-2 py-1 pr-3 items-center flex-row-reverse gap-x-2 rounded-full">
                 <Ionicons name="navigate" color={"#fff"} size={BUTTON_TEXT} />
                 <Text
                   style={{
@@ -528,14 +698,14 @@ const MapScreen = ({ navigation }) => {
                   Mulai
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity className="bg-white border-2 border-slate-100 px-3 my-0 items-center flex-row-reverse gap-x-2 rounded-full">
-                <Ionicons name="navigate" size={BUTTON_TEXT} />
+              <TouchableOpacity className="bg-white border  px-2 my-0 items-center flex-row-reverse gap-x-2 rounded-full">
+                <Ionicons name="call" size={BUTTON_TEXT} />
                 <Text style={{ fontFamily: "epi-r", fontSize: BUTTON_TEXT }}>
                   Telepon
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity className="bg-white border-2 border-slate-100 px-3 my-0 items-center flex-row-reverse gap-x-2 rounded-full">
-                <Ionicons name="navigate" size={BUTTON_TEXT} />
+              <TouchableOpacity className="bg-white border  px-2 my-0 items-center flex-row-reverse gap-x-2 rounded-full">
+                <Ionicons name="share-social" size={BUTTON_TEXT} />
                 <Text style={{ fontFamily: "epi-r", fontSize: BUTTON_TEXT }}>
                   Bagikan
                 </Text>
@@ -547,7 +717,7 @@ const MapScreen = ({ navigation }) => {
                   style={{
                     fontSize: BOTTOMSHEET_TITLE,
                     fontFamily: "epi-b",
-                    marginBottom: 10,
+                    marginVertical: 10,
                   }}
                 >
                   Ulasan
@@ -557,16 +727,18 @@ const MapScreen = ({ navigation }) => {
                     <View className="flex-row my-3" key={index}>
                       <View className="flex-1">
                         <Image
-                          className="h-full"
+                          className="w-10 h-10"
                           resizeMode={"cover"}
                           source={{ uri: review.profile_photo_url }}
                         />
                       </View>
-                      <View className="flex-4">
-                        <Text numberOfLines={4}>{review.text}</Text>
-                        <Text>
+                      <View className="flex-[4]">
+                        <Text style={{ fontFamily: "epi-b" }}>
                           {review.author_name} ·{" "}
                           {review.relative_time_description}{" "}
+                        </Text>
+                        <Text style={{ fontFamily: "epi-r" }} numberOfLines={6}>
+                          {review.text}
                         </Text>
                       </View>
                     </View>
@@ -577,8 +749,11 @@ const MapScreen = ({ navigation }) => {
           </BottomSheetScrollView>
         </BottomSheet>
       )}
-
-      <View className="absolute z-50 items-center gap-x-2 flex-1 flex-row w-11/12 self-center top-8">
+      <View
+        style={{ opacity: 1 }}
+        className="absolute bg-primary h-16 w-full top-0 border-b z-10"
+      />
+      <View className="absolute z-50 justify-center items-center flex-1 flex-row w-full px-3 self-center top-2">
         <GooglePlacesAutocomplete
           ref={queryRef}
           query={{
@@ -597,17 +772,21 @@ const MapScreen = ({ navigation }) => {
           onNotFound={() => console.log("no results")}
           listEmptyComponent={() => (
             <View className="flex-1 bg-white p-2">
-              <Text>Tidak ada hasil yang ditemukan </Text>
+              <Text style={{ fontFamily: "epi-r" }}>
+                Tidak ada hasil yang ditemukan{" "}
+              </Text>
             </View>
           )}
+          InputStyle={{ fontFamily: "epi-r", fontSize: 10 }}
+          numberOfLines={1}
+          styles={{
+            textInput: { fontFamily: "epi-r" },
+            description: { fontFamily: "epi-r" },
+          }}
           textInputProps={{
-            InputComp: TextInput,
-            placeholder: "Cari Restoran Soto Betawi?",
+            placeholder: "Cari Soto Betawi?",
           }}
         />
-        <TouchableOpacity onPress={() => queryRef.current?.clear()}>
-          <Fontisto name="close-a" size={20} color={"gray"} />
-        </TouchableOpacity>
       </View>
       {/*<View className="absolute bottom-24 self-center">
          <TouchableOpacity
@@ -623,12 +802,14 @@ const MapScreen = ({ navigation }) => {
         </View>
         </View> */}
 
-      <ScrollView
+      <Animated.ScrollView
         horizontal
         scrollEventThrottle={1}
         showsHorizontalScrollIndicator={false}
         height={40}
-        className="top-[95px] gap-x-3 pl-2 absolute"
+        className={`${
+          !showChip ? "top-[5px]" : "top-[55px]"
+        } transition-transform py-1 h-12 bg-secondary border-b my-2 gap-x-3 pl-2 absolute`}
         contentInset={{ top: 0, left: 20, bottom: 0, right: 20 }}
         contentContainerStyle={{
           paddingLeft: Platform.OS == "android" ? 15 : 0,
@@ -638,7 +819,7 @@ const MapScreen = ({ navigation }) => {
         {nearbySearchShortcuts.categories.map((category, index) => (
           <TouchableOpacity
             key={index}
-            className="bg-white px-3 py-0 my-0 items-center flex-row-reverse gap-x-2 rounded-full"
+            className="bg-white px-3 py-0 my-0 items-center flex-row-reverse gap-x-2 rounded-lg border"
             onPress={async () => {
               let res = await fetch(
                 `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude}%2C${location.longitude}&radius=4000&type=restaurant&keyword=${category.keyword}&key=${GOOGLE_PLACES_API_KEY}`
@@ -659,10 +840,10 @@ const MapScreen = ({ navigation }) => {
             }}
           >
             {category.icon}
-            <Text>{category.name}</Text>
+            <Text style={{ fontFamily: "epi-r" }}>{category.name}</Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </Animated.ScrollView>
 
       {nearbyData && (
         <Animated.ScrollView
@@ -864,7 +1045,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     position: "absolute",
-    bottom: 70,
+    bottom: 0,
     left: 0,
     right: 0,
     paddingVertical: 10,
@@ -874,10 +1055,10 @@ const styles = StyleSheet.create({
   },
   card: {
     // padding: 10,
+    borderWidth: 1,
     elevation: 2,
     backgroundColor: "#FFF",
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
+    borderRadius: 10,
     marginHorizontal: 10,
     shadowColor: "#000",
     shadowRadius: 5,
@@ -894,16 +1075,19 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   textContent: {
-    flex: 2,
+    borderTopWidth: 1,
+    flex: 1.75,
     padding: 10,
   },
   cardtitle: {
     fontSize: 12,
+    fontFamily: "epi-b",
     // marginTop: 5,
-    fontWeight: "bold",
   },
   cardDescription: {
+    marginVertical: 3,
     fontSize: 12,
+    fontFamily: "epi-r",
     color: "#444",
   },
   markerWrap: {
@@ -924,15 +1108,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   signIn: {
-    width: "45%",
+    width: "47%",
     padding: 5,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 3,
+    borderRadius: 7,
     marginHorizontal: 5,
   },
   textSign: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontFamily: "epi-b",
   },
 });

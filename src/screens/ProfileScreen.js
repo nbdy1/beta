@@ -6,6 +6,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StyleSheet,
+  Dimensions,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,9 +19,17 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from "expo-image-picker";
 import { firebase } from "../../firebaseConfig";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { COLORS } from "../constants";
+import { Avatar, Badge, TouchableRipple } from "react-native-paper";
+import RankSvg from "../components/RankSvg";
+import { ScrollView } from "react-native-gesture-handler";
+import { lte } from "lodash";
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const ProfileScreen = ({ navigation }) => {
   const [name, setName] = useState("");
+  const [date, setDate] = useState("");
   const [place, setPlace] = useState(false);
   const [uploading, setUploading] = useState(false);
   const storage = getStorage();
@@ -49,18 +59,26 @@ const ProfileScreen = ({ navigation }) => {
       .get()
       .then((snapshot) => {
         if (snapshot.exists) {
+          console.log(`snapshot data is ${JSON.stringify(snapshot.data())}`);
           setName(snapshot.data());
         } else {
           console.log("User does not exist");
         }
       });
+    let user = firebase.auth().currentUser;
+    let dateObject = new Date(user.metadata.creationTime);
+    let signupDate = dateObject.toLocaleDateString("id-ID", {
+      dateStyle: "short",
+    });
+    console.log(signupDate);
+    setDate(signupDate);
   }, []);
 
   const [c1, dc1] = ["#EF4444", "#DC2626"];
   const titleFont = "epi-b";
   const lvlFont = "epi-r";
   const gradientOptions = [
-    ["#8A2387", "#E94057", "#F27121"],
+    ["#8A2387", "#E93557", "#F27121"],
     ["#ED213A", "#93291E"],
     ["#DA4453", "#89216B"],
   ];
@@ -151,8 +169,65 @@ const ProfileScreen = ({ navigation }) => {
       { cancelable: true, onDismiss: () => console.log("gak jadi aku malu") }
     );
   return (
-    <SafeAreaView className="flex-1">
-      <LinearGradient
+    <SafeAreaView
+      style={{ backgroundColor: COLORS.primary }}
+      className="flex-1"
+    >
+      <View
+        style={{
+          backgroundColor: "#FFFFFF",
+          borderBottomColor: COLORS.divider,
+          borderBottomWidth: 2,
+        }}
+        className="flex-1 items-center flex-row px-5"
+      >
+        <View
+          style={{ justifyContent: "center", alignItems: "center" }}
+          className="rounded-full relative"
+        >
+          <TouchableOpacity onPress={avatarChangeAlert}>
+            <Avatar.Image
+              size={100}
+              source={
+                image
+                  ? require("../../assets/images/default_avatar.jpg")
+                  : require("../../assets/images/default_avatar.jpg")
+              }
+            ></Avatar.Image>
+            {/* {image && (
+              <>
+                <Avatar.Image
+                
+                  size={100}
+                  source={{ uri: image.uri }}
+                ></Avatar.Image>
+              </>
+            )} */}
+          </TouchableOpacity>
+          <Badge
+            style={{
+              borderRadius: 6,
+              fontFamily: "epi-b",
+              left: "27%",
+              right: "27%",
+              bottom: -10,
+            }}
+            className="absolute bg-secondary"
+          >
+            Lvl 25
+          </Badge>
+        </View>
+        <View className="px-5">
+          <Text style={{ fontFamily: "epi-b", fontSize: 16 }}>
+            {name ? `${name.firstName} ${name.lastName}` : "User"}
+          </Text>
+          <Text style={{ fontFamily: "epi-m", fontSize: 12 }}>
+            Tangerang, Banten
+          </Text>
+          <Text style={{ fontFamily: "epi-m", fontSize: 12 }}>{date}</Text>
+        </View>
+      </View>
+      {/* <LinearGradient
         style={{ flex: 3 }}
         colors={gradientOptions[2]}
         className="rounded-t-2xl"
@@ -207,10 +282,130 @@ const ProfileScreen = ({ navigation }) => {
         </View>
 
         <View className="bottom-0 bg-white shadow-2xl w-full h-3 rounded-t-full absolute"></View>
-      </LinearGradient>
-      <View style={{ flex: 4 }} className="bg-white"></View>
+      </LinearGradient> */}
+      <View className="flex-[4]">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          bounces={true}
+          contentContainerStyle={{ paddingBottom: 70 }}
+          className="bg-white px-5"
+        >
+          <View>
+            <Text
+              style={{
+                fontFamily: "epi-b",
+                fontSize: 20,
+                marginTop: 35,
+                marginBottom: 10,
+              }}
+            >
+              Statistik
+            </Text>
+            <View style={styles.roundedContainer} className="justify-center">
+              <View className="items-center pt-2 w-1/3">
+                <Text
+                  style={{
+                    fontFamily: "epi-b",
+                    fontSize: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  Streak Terpanjang
+                </Text>
+                <View className="items-center">
+                  <FontAwesome5 name={"fire"} color="orange" size={35} />
+                  <Text
+                    style={{
+                      fontFamily: "epi-bl",
+                      marginTop: -17,
+                      fontSize: 25,
+                      color: "#e86b0d",
+                    }}
+                  >
+                    20
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  borderColor: COLORS.divider,
+                  borderLeftWidth: 2,
+                  borderRightWidth: 2,
+                }}
+                className="items-center pt-2 w-1/3"
+              >
+                <Text
+                  style={{
+                    fontFamily: "epi-b",
+                    fontSize: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  Rank Tertinggi
+                </Text>
+                <RankSvg name={"Diamond"} height={60} width={60} />
+              </View>
+              <View className="items-center pt-2 w-1/3">
+                <Text
+                  style={{
+                    fontFamily: "epi-b",
+                    fontSize: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  Rank Sekarang
+                </Text>
+                <RankSvg name={"Emerald"} height={60} width={60} />
+              </View>
+            </View>
+            <Text
+              style={{
+                fontFamily: "epi-b",
+                fontSize: 20,
+                marginTop: 35,
+                marginBottom: 10,
+              }}
+            >
+              Medali
+            </Text>
+            <View style={styles.roundedContainer}></View>
+            <Text
+              style={{
+                fontFamily: "epi-b",
+                fontSize: 20,
+                marginTop: 35,
+                marginBottom: 10,
+              }}
+            >
+              Teman
+            </Text>
+          </View>
+
+          <View style={styles.BigContainer}></View>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
 
+const styles = StyleSheet.create({
+  roundedContainer: {
+    height: 110,
+    width: "100%",
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderColor: COLORS.divider,
+    borderWidth: 2,
+    borderRadius: 15,
+  },
+  BigContainer: {
+    height: 200,
+    width: "100%",
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderColor: COLORS.divider,
+    borderWidth: 2,
+    borderRadius: 15,
+  },
+});
 export default ProfileScreen;

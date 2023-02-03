@@ -11,6 +11,7 @@ export const COLORS = {
 
   black: "#171717",
   white: "#F5F5F5",
+  divider: "#D9D9D9",
   background: "#252C4A",
   shadow: "#DEA183",
 };
@@ -19,4 +20,12 @@ export const SIZES = {
   base: 10,
   width,
   height,
+};
+
+export const shadowBrutal = {
+  shadowColor: "black",
+  shadowOffset: { width: 10, height: 10 },
+  shadowOpacity: 1,
+  shadowRadius: 4.65,
+  elevation: 6,
 };

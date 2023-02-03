@@ -24,11 +24,17 @@ const StarRating = (props) => {
 
   return (
     <View className="flex-row  items-center">
-      <Text className="text-sm mr-1 text-slate-600">
+      <Text
+        style={{ fontFamily: "epi-r" }}
+        className="text-sm mr-1 text-slate-600"
+      >
         {JSON.stringify(props.ratings).replace(".", ",")}
       </Text>
       {stars}
-      <Text className="text-sm ml-1 text-slate-600">
+      <Text
+        style={{ fontFamily: "epi-r" }}
+        className="text-sm ml-1 text-slate-600"
+      >
         <MaterialIcons size={10} name={"people-alt"} color="#94A3B8" />{" "}
         {props.reviews}
       </Text>

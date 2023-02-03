@@ -9,8 +9,10 @@ import { useCallback } from "react";
 import { useFonts } from "expo-font";
 import Login from "./src/screens/Login";
 import Registration from "./src/screens/Registration";
+import MapScreen from "./src/screens/MapScreen";
 import { firebase } from "./firebaseConfig";
 import { ContextProvider } from "./src/constants/noCycle";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createNativeStackNavigator();
 
@@ -58,35 +60,42 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={Login}
-            options={{ headerShown: false }}
+            options={{ headerShown: false, animation: "slide_from_left" }}
           />
           <Stack.Screen
             name="Registration"
             component={Registration}
-            options={{ headerShown: false }}
+            options={{ headerShown: false, animation: "slide_from_right" }}
           />
         </Stack.Navigator>
       </NavigationContainer>
     );
   }
   return (
-    <ContextProvider>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="Tabs">
-            <Stack.Screen
-              name="Tabs"
-              component={TabNavigator}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="NoTabs"
-              component={StageScreen}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </ContextProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ContextProvider>
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName="Tabs">
+              <Stack.Screen
+                name="Tabs"
+                component={TabNavigator}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="NoTabs"
+                component={StageScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Map"
+                component={MapScreen}
+                options={{ headerShown: true }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </ContextProvider>
+    </GestureHandlerRootView>
   );
 }

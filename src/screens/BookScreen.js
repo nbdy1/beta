@@ -8,7 +8,11 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import BlogCard from "../components/BlogCard";
 
 const FirstRoute = () => (
-  <ScrollView style={{ flex: 1, backgroundColor: "fdfdfd" }}>
+  <ScrollView
+    contentContainerStyle={{ paddingBottom: 50 }}
+    showsVerticalScrollIndicator={false}
+    style={{ flex: 1, backgroundColor: "fdfdfd" }}
+  >
     <BlogCard
       cardTitle={"Cara Bikin Soto Betawi"}
       cardSubtitle={"14 Desember 2022"}
@@ -22,7 +26,7 @@ const FirstRoute = () => (
       cardImage={require("../../assets/images/nasi_uduk.jpg")}
     />
     <BlogCard
-      cardTitle={"Cara Bikin Soto Betawi"}
+      cardTitle={"Apa bedanya Ketoprak sama Gado-gado?"}
       cardSubtitle={"27 Januari 2022"}
       cardAuthor={"Asep Harapan"}
     />
@@ -30,11 +34,17 @@ const FirstRoute = () => (
 );
 
 const SecondRoute = () => (
-  <ScrollView style={{ flex: 1, backgroundColor: "#fdfdfd" }} />
+  <ScrollView
+    showsVerticalScrollIndicator={false}
+    style={{ flex: 1, backgroundColor: "#fdfdfd" }}
+  />
 );
 
 const ThirdRoute = () => (
-  <ScrollView style={{ flex: 1, backgroundColor: "#fdfdfd" }} />
+  <ScrollView
+    showsVerticalScrollIndicator={false}
+    style={{ flex: 1, backgroundColor: "#fdfdfd" }}
+  />
 );
 
 const renderScene = SceneMap({
