@@ -19,6 +19,8 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { SafeAreaView } from "react-native-safe-area-context";
 import Modal from "react-native-modal";
 import { Audio } from "expo-av";
+import Betacoin from "../../assets/svg/betacoin.svg";
+
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import {
@@ -349,13 +351,13 @@ const StageScreen = ({ route, navigation }) => {
               onPress={() => setCurrentOptionSelected(option)}
               disabled={isOptionsDisabled}
               key={option}
-              className={`rounded-lg bg-gray-50 ${
+              className={`rounded-lg border bg-gray-50 ${
                 currentOptionSelected == option ? "bg-yellow-100" : "bg-gray-50"
-              } shadow-lg  flex-row justify-center items-center py-5 my-3`}
+              } -lg  flex-row justify-center items-center py-5 my-3`}
             >
               <Text
                 style={{ fontFamily: "epi-r" }}
-                className="text-xl mt-1 text-black px-5"
+                className="text-xl text-black px-5"
               >
                 {option}
               </Text>
@@ -368,7 +370,7 @@ const StageScreen = ({ route, navigation }) => {
       return (
         <View className="px-2 mt-10 mb-5">
           <TextInput
-            style={{ fontFamily: "epi-r" }}
+            style={{ fontFamily: "epi-r", borderWidth: 1 }}
             borderRadius={10}
             multiline={true}
             placeholder="Apa ya??"
@@ -387,7 +389,7 @@ const StageScreen = ({ route, navigation }) => {
           >
             <View className="mb-2">
               <TextInput
-                className="h-12 pl-2 pt-3 text-xl w-20"
+                className="h-12 pl-2 pt-3 border text-xl w-20"
                 style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
@@ -409,7 +411,7 @@ const StageScreen = ({ route, navigation }) => {
           >
             <View className="mb-2">
               <TextInput
-                className="h-12 pl-2 pt-3 text-xl w-20"
+                className="h-12 pl-2 pt-3 border text-xl w-20"
                 style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
@@ -422,7 +424,7 @@ const StageScreen = ({ route, navigation }) => {
             </View>
             <View className="mb-2">
               <TextInput
-                className="h-12 pl-2 pt-3 text-xl w-20"
+                className="h-12 pl-2 pt-3 border text-xl w-20"
                 style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
@@ -444,7 +446,7 @@ const StageScreen = ({ route, navigation }) => {
           >
             <View className="mb-2">
               <TextInput
-                className="h-12 pl-2 pt-3 text-xl w-20"
+                className="h-12 pl-2 pt-3 border text-xl w-20"
                 style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
@@ -457,7 +459,7 @@ const StageScreen = ({ route, navigation }) => {
             </View>
             <View className="mb-2">
               <TextInput
-                className="h-12 pl-2 pt-3 text-xl w-20"
+                className="h-12 pl-2 pt-3 border text-xl w-20"
                 style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
@@ -470,7 +472,7 @@ const StageScreen = ({ route, navigation }) => {
             </View>
             <View className="mb-2">
               <TextInput
-                className="h-12 pl-2 pt-3 text-xl w-20"
+                className="h-12 pl-2 pt-3 border text-xl w-20"
                 style={{ fontFamily: "epi-r" }}
                 height={60}
                 borderRadius={10}
@@ -495,18 +497,18 @@ const StageScreen = ({ route, navigation }) => {
               <TouchableOpacity
                 key={key}
                 activeOpacity={0.5}
-                className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
+                className="px-2 mb-5 rounded-xl pt-3 border bg-slate-200 -md"
               >
                 <Text
                   style={{ fontFamily: "epi-b" }}
-                  className="text-black text-2xl"
+                  className="text-black text-xl"
                 >
                   {value.new_word}
                 </Text>
                 {value.meaning && (
                   <Text
                     style={{ fontFamily: "epi-r" }}
-                    className="text-black text-xl"
+                    className="text-black text-lg"
                   >
                     👉 berarti{" "}
                     <Text className="text-blue-700 font-bold">
@@ -518,7 +520,7 @@ const StageScreen = ({ route, navigation }) => {
                 {value.same_with && (
                   <Text
                     style={{ fontFamily: "epi-r" }}
-                    className="text-black text-xl"
+                    className="text-black text-lg"
                   >
                     🤝 sama dengan{" "}
                     <Text className="text-blue-700 font-bold">
@@ -529,9 +531,10 @@ const StageScreen = ({ route, navigation }) => {
                 )}
                 <Text
                   style={{ fontFamily: "epi-r" }}
-                  className="text-black text-xl"
+                  className="text-black text-lg"
                 >
-                  <Text className="font-bold">Contoh: </Text> {value.example}
+                  <Text className="font-bold text-lg">Contoh: </Text>{" "}
+                  {value.example}
                 </Text>
               </TouchableOpacity>
             )
@@ -541,7 +544,7 @@ const StageScreen = ({ route, navigation }) => {
       // <ScrollView className="px-2">
       //   <TouchableOpacity
       //     activeOpacity={0.5}
-      //     className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
+      //     className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 -md"
       //   >
       //     <Text
       //       style={{ fontFamily: "epi-b" }}
@@ -566,7 +569,7 @@ const StageScreen = ({ route, navigation }) => {
       //   </TouchableOpacity>
       //   <TouchableOpacity
       //     activeOpacity={0.5}
-      //     className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
+      //     className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 -md"
       //   >
       //     <Text
       //       style={{ fontFamily: "epi-b" }}
@@ -591,7 +594,7 @@ const StageScreen = ({ route, navigation }) => {
       //   </TouchableOpacity>
       //   <TouchableOpacity
       //     activeOpacity={0.5}
-      //     className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 shadow-md"
+      //     className="px-2 mb-5 rounded-xl pt-3 bg-slate-200 -md"
       //   >
       //     <Text
       //       style={{ fontFamily: "epi-b" }}
@@ -638,7 +641,7 @@ const StageScreen = ({ route, navigation }) => {
   //           key={option}
   //           className={`rounded-lg bg-gray-50 ${
   //             currentOptionSelected == option ? "bg-yellow-100" : "bg-gray-50"
-  //           } shadow-sm  flex-row justify-center items-center py-5 my-3`}
+  //           } -sm  flex-row justify-center items-center py-5 my-3`}
   //         >
   //           <Text
   //             style={{ fontFamily: "epi-r" }}
@@ -737,14 +740,14 @@ const StageScreen = ({ route, navigation }) => {
             className={`${
               currentOptionSelected === null
                 ? "bg-gray-300"
-                : "bg-blue-500 shadow-2xl"
-            }  rounded-xl py-2 w-full`}
+                : "bg-blue-500 -2xl"
+            }  rounded-xl w-full py-2 border`}
             disabled={currentOptionSelected === null ? true : false}
             onPress={() => checkAndModal(currentOptionSelected)}
           >
             <Text
-              style={{ fontFamily: "epi-bl" }}
-              className={`pt-3 text-center text-white text-2xl`}
+              style={{ fontFamily: "epi-b" }}
+              className={`text-center text-white text-2xl`}
             >
               {`Cek Jawaban `}
               <FontAwesome5
@@ -765,14 +768,14 @@ const StageScreen = ({ route, navigation }) => {
         <View className="absolute bottom-5 right-5 left-5">
           <TouchableOpacity
             className={`${
-              text === "" ? "bg-gray-300" : "bg-blue-500 shadow-2xl"
-            } rounded-xl py-2 w-full`}
+              text === "" ? "bg-gray-300" : "bg-blue-500 -2xl"
+            } rounded-xl py-2 w-full border`}
             disabled={text === "" ? true : false}
             onPress={() => checkAndModal()}
           >
             <Text
-              style={{ fontFamily: "epi-bl" }}
-              className={`pt-3 text-center text-white text-2xl`}
+              style={{ fontFamily: "epi-b" }}
+              className={` text-center text-white text-2xl`}
             >
               {`Cek Jawaban `}
               <FontAwesome5
@@ -791,13 +794,13 @@ const StageScreen = ({ route, navigation }) => {
             <TouchableOpacity
               className={`${
                 blank1 === "" ? "bg-gray-300" : "bg-blue-500"
-              } shadow-2xl rounded-xl py-2 w-full`}
+              } -2xl rounded-xl py-2 w-full border`}
               disabled={blank1 === "" ? true : false}
               onPress={() => checkAndModal([blank1])}
             >
               <Text
-                style={{ fontFamily: "epi-bl" }}
-                className={`pt-3 text-center text-white text-2xl`}
+                style={{ fontFamily: "epi-b" }}
+                className={`text-center text-white text-2xl`}
               >
                 {`Cek Jawaban `}
                 <FontAwesome5
@@ -815,13 +818,13 @@ const StageScreen = ({ route, navigation }) => {
             <TouchableOpacity
               className={`${
                 blank1 === "" || blank2 === "" ? "bg-gray-300" : "bg-blue-500"
-              } shadow-2xl rounded-xl py-2 w-full`}
+              } -2xl rounded-xl py-2 w-full border`}
               disabled={blank1 === "" || blank2 === "" ? true : false}
               onPress={() => checkAndModal([blank1, blank2])}
             >
               <Text
-                style={{ fontFamily: "epi-bl" }}
-                className={`pt-3 text-center text-white text-2xl`}
+                style={{ fontFamily: "epi-b" }}
+                className={`text-center text-white text-2xl`}
               >
                 {`Cek Jawaban `}
                 <FontAwesome5
@@ -841,13 +844,13 @@ const StageScreen = ({ route, navigation }) => {
                 blank1 === "" || blank2 === "" || blank3 === ""
                   ? "bg-gray-300"
                   : "bg-blue-500"
-              } shadow-2xl rounded-xl py-2 w-full`}
+              } -2xl rounded-xl py-2 w-full`}
               disabled={blank1 === "" || blank2 === "" ? true : false}
               onPress={() => checkAndModal([blank1, blank2, blank3])}
             >
               <Text
-                style={{ fontFamily: "epi-bl" }}
-                className={`pt-3 text-center text-white text-2xl`}
+                style={{ fontFamily: "epi-b" }}
+                className={` text-center text-white text-2xl`}
               >
                 {`Cek Jawaban `}
                 <FontAwesome5
@@ -864,13 +867,13 @@ const StageScreen = ({ route, navigation }) => {
       return (
         <View className="absolute bottom-5 right-5 left-5">
           <TouchableOpacity
-            className={`bg-purple-500 shadow-2xl rounded-xl py-2 w-full`}
+            className={`bg-purple-500 border rounded-xl py-2 w-full`}
             disabled={false}
             onPress={() => handleNext()}
           >
             <Text
-              style={{ fontFamily: "epi-bl" }}
-              className={`pt-3 text-center text-white text-2xl`}
+              style={{ fontFamily: "epi-b" }}
+              className={`text-center text-white text-2xl`}
             >
               Ok
             </Text>
@@ -934,8 +937,9 @@ const StageScreen = ({ route, navigation }) => {
               width: "100%",
               height: 20,
               borderRadius: 20,
-              backgroundColor: "#00000020",
+              backgroundColor: COLORS.primary,
               paddingBottom: 10,
+              borderWidth: 1,
             }}
           >
             <Animated.View
@@ -943,7 +947,7 @@ const StageScreen = ({ route, navigation }) => {
                 {
                   height: 20,
                   borderRadius: 20,
-                  backgroundColor: "#7DD3FC",
+                  backgroundColor: COLORS.secondary,
                 },
                 {
                   width: progressAnim,
@@ -953,7 +957,7 @@ const StageScreen = ({ route, navigation }) => {
           </View>
           <View className="items-end mr-2">
             <Text
-              style={{ fontFamily: "epi-bl" }}
+              style={{ fontFamily: "epi-b" }}
               className="text-black text-lg absolute top-5"
             >
               {currentQuestionIndex + 1} {"/"} {allQuestions.length}
@@ -1009,43 +1013,43 @@ const StageScreen = ({ route, navigation }) => {
           className="flex-1 justify-center items-center bg-slate-100"
         >
           <Text
-            style={{ fontFamily: "epi-bl", fontSize: 48 }}
+            style={{ fontFamily: "epi-b", fontSize: 48 }}
             className="tracking-widest"
           >
             Selesai!
           </Text>
-          <View className="shadow-lg bg-white rounded-lg shadow-black">
+          <View className="-lg mt-5 border bg-white rounded-lg -black">
             <Text
-              style={{ fontFamily: "epi-bl", fontSize: 20 }}
-              className="bg-orange-200 w-36 px-4 text-orange-600  rounded-t-lg"
+              style={{ fontFamily: "epi-b", fontSize: 20 }}
+              className="bg-white py-2 w-36 px-4 text-orange-600  rounded-t-lg"
             >
               <FontAwesome5 name="clock" size={20} />
               {"  "}
-              <Text>{"0:20"}</Text>
+              <Text>{"0:38"}</Text>
             </Text>
             <Text
-              style={{ fontFamily: "epi-bl", fontSize: 20 }}
-              className="bg-green-200 w-36 px-4 text-green-600  rounded-none"
+              style={{ fontFamily: "epi-b", fontSize: 20 }}
+              className="bg-white py-2 w-36 px-4 text-green-600  rounded-none"
             >
               <FontAwesome5 name="check-circle" size={20} />
               {"  "}
               {`${((score / pointQuestionsTotal) * 100).toFixed(2)}%`}
             </Text>
             <Text
-              style={{ fontFamily: "epi-bl", fontSize: 20 }}
-              className="bg-blue-200 w-36 px-4 text-blue-600  rounded-b-lg"
+              style={{ fontFamily: "epi-b", fontSize: 20 }}
+              className="bg-white py-2 w-36 px-4 text-blue-600  rounded-b-lg"
             >
-              <FontAwesome5 name="coins" size={20} /> {" +10"}
+              <Betacoins width={20} height={20} />
             </Text>
           </View>
 
           <TouchableOpacity
-            className={`mt-5 rounded-full absolute bottom-5 px-3 bg-red-500
+            className={`mt-5 rounded-lg border absolute bottom-5 px-3 bg-primary
             }`}
             onPress={() => updateBetacoins()}
           >
             <Text
-              style={{ fontFamily: "epi-bl" }}
+              style={{ fontFamily: "epi-b" }}
               className="mt-1 py-2 px-5 text-center text-lg text-white"
             >
               <Ionicons name="home" color="white" size={30} />
@@ -1065,7 +1069,7 @@ const StageScreen = ({ route, navigation }) => {
             isVisible={showResponseModal}
             animationIn={"slideInUp"}
             animationOut={"slideOutDown"}
-            className={`shadow-md  rounded-t-xl ${
+            className={`-md  rounded-t-xl border ${
               isAnswerCorrect ? "bg-lime-100" : "bg-red-100"
             }`}
             onModalShow={() => setIsNextDisabled(false)}
@@ -1084,7 +1088,7 @@ const StageScreen = ({ route, navigation }) => {
             }}
           >
             <Text
-              style={{ fontFamily: "epi-bl" }}
+              style={{ fontFamily: "epi-b" }}
               className={`text-3xl  pl-1 ${
                 isAnswerCorrect ? "text-lime-500" : "text-red-500"
               }`}
@@ -1099,15 +1103,15 @@ const StageScreen = ({ route, navigation }) => {
             Jawaban yang benar: aye
           </Text> */}
             <TouchableOpacity
-              className={`mt-5 rounded-xl ${
+              className={`mt-5 rounded-xl border ${
                 isAnswerCorrect ? "bg-lime-500" : "bg-red-500"
               }`}
               onPress={() => handleNext()}
               disabled={isNextDisabled}
             >
               <Text
-                style={{ fontFamily: "epi-bl" }}
-                className="mt-1 py-2 text-center text-lg text-white"
+                style={{ fontFamily: "epi-b" }}
+                className=" py-2 text-center text-lg text-white"
               >
                 Lanjut
               </Text>

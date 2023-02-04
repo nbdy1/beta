@@ -1,10 +1,13 @@
 import * as React from "react";
-import { View, Image } from "react-native";
+import { View, Image, TouchableOpacity } from "react-native";
 import { Card, Text } from "react-native-paper";
 
 const BlogCard = ({ cardTitle, cardSubtitle, cardImage, cardAuthor }) => (
-  <View className="w-full h-36 px-6 items-center flex-row border-b border-sky-100">
-    <View className="w-16 h-16 bg-transparent rounded-lg overflow-hidden">
+  <TouchableOpacity
+    activeOpacity={0.8}
+    className="w-full h-36 px-6 bg-primary items-center flex-row border-b"
+  >
+    <View className="w-16 h-16 border rounded-lg overflow-hidden">
       <Image
         className="object-fill w-full h-full"
         source={
@@ -24,7 +27,7 @@ const BlogCard = ({ cardTitle, cardSubtitle, cardImage, cardAuthor }) => (
         {cardAuthor + " ·"} {cardSubtitle}
       </Text>
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
 export default BlogCard;

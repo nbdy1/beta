@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FlatList,
   Text,
@@ -21,10 +21,27 @@ import QText from "../components/QText";
 import { IconButton, MD3Colors } from "react-native-paper";
 import Modal from "react-native-modal";
 import Betacoin from "../../assets/svg/betacoin.svg";
-import MaskedView from "@react-native-masked-view/masked-view";
+import { firebase } from "../../firebaseConfig";
 
 const ExploreScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          setData(snapshot.data());
+          console.log(snapshot.data());
+        } else {
+          console.log("User does not exist");
+        }
+      });
+  }, []);
   return (
     <SafeAreaView
       style={{ backgroundColor: COLORS.primary }}
@@ -36,7 +53,11 @@ const ExploreScreen = ({ navigation }) => {
         isVisible={showModal}
         className="flex-1 border m-0 justify-center items-center"
       >
-        <View className="relative border h-1/2 w-3/4 rounded-lg bg-primary"></View>
+        <View className="relative border h-1/2 w-3/4 items-center justify-center rounded-lg bg-primary">
+          <TouchableOpacity onPress={() => setShowModal(false)}>
+            <Text>Tutup</Text>
+          </TouchableOpacity>
+        </View>
       </Modal>
       <View
         style={{
@@ -53,18 +74,20 @@ const ExploreScreen = ({ navigation }) => {
           </Text>
           <MaterialIcons name="explore" size={35} />
         </View>
-        <View className="flex-row gap-x-2 items-center">
-          <Betacoin width={30} height={30} />
-          <Text
-            style={{
-              fontFamily: "epi-b",
-              fontSize: 24,
-              marginRight: 5,
-            }}
-          >
-            110
-          </Text>
-        </View>
+        {data?.currency?.betacoins ? (
+          <View className="flex-row gap-x-2 items-center">
+            <Betacoin width={30} height={30} />
+            <Text
+              style={{
+                fontFamily: "epi-b",
+                fontSize: 24,
+                marginRight: 5,
+              }}
+            >
+              {data?.currency?.betacoins}
+            </Text>
+          </View>
+        ) : null}
       </View>
       <View style={{ backgroundColor: "hotpink" }} className="flex-[4]">
         <View
@@ -97,7 +120,7 @@ const ExploreScreen = ({ navigation }) => {
           snapToInterval={450}
           decelerationRate="fast"
           contentContainerStyle={{
-            height: SIZES.height * 2,
+            height: SIZES.height * 1.6,
             backgroundColor: "hotpink",
             paddingTop: 5,
           }}
@@ -146,12 +169,31 @@ const ExploreScreen = ({ navigation }) => {
                 <MaterialIcons name="map" size={20} />
               </LinearGradient>
             </TouchableOpacity>
-
-            <Text style={{ fontFamily: "epi-r", fontSize: 16 }}>
+            <Text
+              style={{
+                fontFamily: "epi-r",
+                fontSize: 16,
+                lineHeight: 20,
+                marginBottom: 10,
+              }}
+            >
+              *Tempat-tempat Beta adalah tempat-tempat yang disponsori/bekerja
+              sama dengan Team BetawithYou.
+            </Text>
+            <Text style={{ fontFamily: "epi-r", fontSize: 16, lineHeight: 20 }}>
+              Apabila Anda berkunjung di tempat Beta, jangan lupa untuk QR Scan
+              kode yang ada di sana untuk mendapat Betacoins atau foto dan
+              upload ke Instagram dengan{" "}
+              <Text style={{ fontFamily: "epi-b" }}>#TempatBeta</Text> untuk
+              mendapatkankan redeem code yang bisa dimasukkan di "Harta Karun".
+              Redeem Code cenderung akan memberi lebih banyak Betacoins daripada
+              QR Scan.
+            </Text>
+            {/* <Text style={{ fontFamily: "epi-r", fontSize: 16 }}>
               Kuliner Betawi
             </Text>
             <View className="flex-row my-3">
-              <View className="p-6 bg-rose-400 rounded-lg"></View>
+              <View className="p-6 bg-rose-400 rounded-lg"><</View>
               <View className="p-6 bg-rose-400 rounded-lg ml-3"></View>
               <View className="p-6 bg-rose-400 rounded-lg ml-3"></View>
               <View className="p-6 bg-rose-400 rounded-lg ml-3"></View>
@@ -168,7 +210,7 @@ const ExploreScreen = ({ navigation }) => {
             <View className="flex-row my-3">
               <View className="p-6 bg-lime-400 rounded-lg"></View>
               <View className="p-6 bg-lime-400 rounded-lg ml-3"></View>
-            </View>
+            </View> */}
           </View>
           <View className="bg-white h-6 rounded-b-2xl border border-t-0" />
           <View className="bg-white h-6 mt-5 rounded-t-2xl border border-b-0" />
@@ -177,7 +219,7 @@ const ExploreScreen = ({ navigation }) => {
               backgroundColor: "white",
               borderLeftWidth: 1,
               borderRightWidth: 1,
-              height: 800,
+              height: 1000,
             }}
           >
             <Text
@@ -188,7 +230,7 @@ const ExploreScreen = ({ navigation }) => {
                 marginBottom: 20,
               }}
             >
-              Market
+              BetaMarket
             </Text>
             <View className="flex-row px-5 gap-x-3 justify-center mb-5">
               <View className="w-5/12 border h-64 rounded-xl relative bg-primary overflow-hidden">
@@ -208,7 +250,7 @@ const ExploreScreen = ({ navigation }) => {
                 <View className="absolute w-full h-full bg-black opacity-10" />
               </View>
               <TouchableOpacity
-                onPress={() => setShowModal(true)}
+                // onPress={() => setShowModal(true)}
                 className="w-5/12 border h-64 rounded-xl relative bg-primary overflow-hidden"
               >
                 <View className="w-full h-44 border rounded-xl overflow-hidden">
@@ -261,13 +303,20 @@ const ExploreScreen = ({ navigation }) => {
                 <View className="absolute w-full h-full bg-black opacity-10" />
               </View>
             </View>
-            <View className="flex-row px-5 gap-x-3 justify-center mb-5">
-              <View className="w-5/12 h-40 rounded-xl bg-gray-200"></View>
-              <View className="w-5/12 h-40 rounded-xl bg-gray-200"></View>
-            </View>
-            <View className="flex-row px-5 gap-x-3 justify-center mb-5">
-              <View className="w-5/12 h-40 rounded-xl bg-gray-200"></View>
-              <View className="w-5/12 h-40 rounded-xl bg-gray-200"></View>
+            <View className="text-center mx-2 p-3 rounded-lg border mt-5 justify-center items-center">
+              <Text
+                className="text-center"
+                style={{ fontFamily: "epi-r", fontSize: 18, lineHeight: 24 }}
+              >
+                Hubungi kami untuk menjadi{" "}
+                <Text className="font-bold"> Partner BetaMarket</Text>
+              </Text>
+              <Text
+                className="text-center mt-1"
+                style={{ fontFamily: "epi-r", fontSize: 18 }}
+              >
+                +62 813-8534-5170 (Pak Samuel)
+              </Text>
             </View>
           </View>
         </ScrollView>

@@ -2,16 +2,13 @@ import * as React from "react";
 import { Card, Text } from "react-native-paper";
 
 const NewsCard = ({ cardTitle, cardContent, cardImage }) => (
-  <Card
-    className="h-48 w-56 mr-3 rounded-lg border border-yellow-500 border-t-0"
-    mode="outlined"
-  >
+  <Card className="h-48 w-56 mr-3 rounded-lg border border-black">
     {/* <Card.Content>
       <Text variant="titleLarge">{cardTitle}</Text>
       <Text variant="bodyMedium">{cardContent}</Text>
     </Card.Content> */}
     <Card.Cover
-      className="h-2/3 rounded-md"
+      className="h-2/3 rounded-md border"
       source={
         cardImage ? cardImage : require("../../assets/images/no_image.png")
       }

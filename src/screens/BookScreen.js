@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import NewsCard from "../components/NewsCard";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import BlogCard from "../components/BlogCard";
+import { COLORS, SIZES } from "../constants";
 
 const FirstRoute = () => (
   <ScrollView
@@ -14,14 +15,14 @@ const FirstRoute = () => (
     style={{ flex: 1, backgroundColor: "fdfdfd" }}
   >
     <BlogCard
-      cardTitle={"Cara Bikin Soto Betawi"}
+      cardTitle={"Cara Bikin Soto Betawi Yang Enak"}
       cardSubtitle={"14 Desember 2022"}
       cardAuthor={"Asep Harapan"}
       cardImage={require("../../assets/images/soto_betawi.jpg")}
     />
     <BlogCard
-      cardTitle={"Nasi Uduk Review"}
-      cardSubtitle={"25 Mei Januari 2022"}
+      cardTitle={"Nasi Uduk - Street Review"}
+      cardSubtitle={"25 Mei 2022"}
       cardAuthor={"Lisa Jane"}
       cardImage={require("../../assets/images/nasi_uduk.jpg")}
     />
@@ -35,16 +36,50 @@ const FirstRoute = () => (
 
 const SecondRoute = () => (
   <ScrollView
+    contentContainerStyle={{ paddingBottom: 50 }}
     showsVerticalScrollIndicator={false}
-    style={{ flex: 1, backgroundColor: "#fdfdfd" }}
-  />
+    style={{ flex: 1, backgroundColor: "fdfdfd" }}
+  >
+    <BlogCard
+      cardTitle={"Jalan-jalan ke Rumah Si Pitung"}
+      cardSubtitle={"10 Maret 2022"}
+      cardAuthor={"Samuel Nelson"}
+    />
+    <BlogCard
+      cardTitle={"Apa yang baru dengan Monas di 2023?"}
+      cardSubtitle={"17 Juni 2022"}
+      cardAuthor={"Black Panther"}
+    />
+    <BlogCard
+      cardTitle={"Serunya Liburan Sehabis Pandemi"}
+      cardSubtitle={"27 Januari 2022"}
+      cardAuthor={"Julia Mentari"}
+    />
+  </ScrollView>
 );
 
 const ThirdRoute = () => (
   <ScrollView
+    contentContainerStyle={{ paddingBottom: 50 }}
     showsVerticalScrollIndicator={false}
-    style={{ flex: 1, backgroundColor: "#fdfdfd" }}
-  />
+    style={{ flex: 1, backgroundColor: "fdfdfd" }}
+  >
+    <BlogCard
+      cardTitle={"Kisah Si Pitung (Versi Saya Pribadi)"}
+      cardSubtitle={"10 Maret 2022"}
+      cardAuthor={"Millentya Jayasakti"}
+    />
+    <BlogCard
+      cardTitle={"Putri Keong Mas (versi orang dulu)"}
+      cardSubtitle={"17 Juni 2022"}
+      cardAuthor={"Fitri Purnama"}
+    />
+    <BlogCard
+      cardTitle={"Sabeni Jagoan Tanah Abang"}
+      cardSubtitle={"27 Januari 2022"}
+      cardAuthor={"Russel Young"}
+    />
+  </ScrollView>
 );
 
 const renderScene = SceneMap({
@@ -55,7 +90,7 @@ const renderScene = SceneMap({
 
 const BookScreen = ({ navigation }) => {
   const [c1, dc1] = ["#EF4444", "#DC2626"];
-  const titleFont = "epi-bl";
+  const titleFont = "epi-b";
   const lvlFont = "epi-m";
 
   const [index, setIndex] = useState(0);
@@ -66,7 +101,7 @@ const BookScreen = ({ navigation }) => {
   ]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-red-500">
       <StatusBar style="auto" />
       {/* <View className="h-15 flex-row items-center bg-white">
         <Text
@@ -77,18 +112,18 @@ const BookScreen = ({ navigation }) => {
         </Text>
         <Ionicons name="library" size={30} color="forestgreen" />
       </View> */}
-      <View className="flex-[3] pl-5 bg-white">
-        <View className="flex-row pt-3 my-3">
-          <View className="mr-1">
+      <View className="flex-[3] pl-5 bg-red-500 border-b">
+        <View className="flex-row items-center pt-3 my-3">
+          <View className="mr-2">
             <Text
               style={{ fontFamily: titleFont }}
-              className="text-green-600 text-2xl"
+              className="text-black text-3xl"
             >
-              Beta<Text className="text-green-600">News</Text>
+              Beta<Text className="text-black">News</Text>
             </Text>
           </View>
           <View>
-            <Ionicons name="newspaper" size={20} color={"forestgreen"} />
+            <Ionicons name="newspaper" size={35} color={"black"} />
           </View>
         </View>
 
@@ -110,34 +145,42 @@ const BookScreen = ({ navigation }) => {
           />
         </ScrollView>
       </View>
-      <View className="flex-[5]">
-        <View className="flex-row pt-3 my-3 pl-5">
-          <View className="mr-1">
+      <View className="flex-[5] bg-indigo-500">
+        <View className="flex-row items-center pt-3 my-3 pl-5">
+          <View className="mr-2">
             <Text
               style={{ fontFamily: titleFont }}
-              className="text-sky-500 text-2xl"
+              className="text-black text-3xl"
             >
-              Beta<Text className="text-sky-500">Blog</Text>
+              Beta<Text className="text-black">Blog</Text>
             </Text>
           </View>
           <View>
-            <Ionicons name="newspaper" size={20} color={"steelblue"} />
+            <FontAwesome5 name="pencil-alt" size={35} color={"black"} />
           </View>
+          <TouchableOpacity className="absolute right-3 px-3 py-1 rounded-lg bg-primary bottom-0 border">
+            <Text
+              style={{ fontFamily: titleFont }}
+              className="text-black text-xl"
+            >
+              Tulis Blog
+            </Text>
+          </TouchableOpacity>
         </View>
         <TabView
           renderTabBar={(props) => (
             <TabBar
               {...props}
               indicatorStyle={{ backgroundColor: "white" }}
-              style={{}}
+              style={{ borderTopWidth: 1, borderBottomWidth: 1 }}
               tabStyle={{
-                backgroundColor: "#0EA5E9",
+                backgroundColor: "#4f46e5",
                 minHeight: 30,
               }} // here
               renderLabel={({ route, focused, color }) => (
                 <Text
                   style={{
-                    color,
+                    color: COLORS.primary,
                     marginHorizontal: 8,
                     marginTop: 4,
                     fontFamily: "epi-b",

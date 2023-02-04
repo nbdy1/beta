@@ -612,6 +612,19 @@ const MapScreen = ({ navigation }) => {
               paddingBottom: 70,
             }}
           >
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              className="absolute rounded-lg border py-1 px-2 bg-primary top-14 right-5"
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: "epi-r",
+                }}
+              >
+                Check-In +50 BC
+              </Text>
+            </TouchableOpacity>
             <Text
               style={{
                 fontSize: BOTTOMSHEET_TITLE,
@@ -807,9 +820,7 @@ const MapScreen = ({ navigation }) => {
         scrollEventThrottle={1}
         showsHorizontalScrollIndicator={false}
         height={40}
-        className={`${
-          !showChip ? "top-[5px]" : "top-[55px]"
-        } transition-transform py-1 h-12 bg-secondary border-b my-2 gap-x-3 pl-2 absolute`}
+        className={`${"top-[55px]"} transition-transform py-1 h-12 bg-secondary border-b my-2 gap-x-3 pl-2 absolute`}
         contentInset={{ top: 0, left: 20, bottom: 0, right: 20 }}
         contentContainerStyle={{
           paddingLeft: Platform.OS == "android" ? 15 : 0,

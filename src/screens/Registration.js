@@ -16,19 +16,14 @@ const Registration = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  const data = {
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    levelProgress: {
-      chapter: 1,
-      stage: 1,
-      substage: 1,
-    },
-    currency: {
-      betacoins: 0,
-      xp: 0,
-    },
+  const levelProgress = {
+    chapter: 1,
+    stage: 1,
+    substage: 1,
+  };
+  const currency = {
+    betacoins: 0,
+    xp: 0,
   };
 
   const registerUser = async (email, password, firstName, lastName) => {
@@ -53,7 +48,13 @@ const Registration = ({ navigation }) => {
               .firestore()
               .collection("users")
               .doc(firebase.auth().currentUser.uid)
-              .set(data);
+              .set({
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                levelProgress: levelProgress,
+                currency: currency,
+              });
           })
           .catch((error) => {
             alert(error.message);

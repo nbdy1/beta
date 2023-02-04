@@ -17,6 +17,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
+import Betacoin from "../../assets/svg/betacoin.svg";
 import * as SplashScreen from "expo-splash-screen";
 import { firebase } from "../../firebaseConfig";
 import { Context } from "../constants/noCycle";
@@ -32,15 +33,15 @@ import RankSvg from "../components/RankSvg";
 const HomeScreen = ({ navigation }) => {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: "first", title: "Lite" },
-    { key: "second", title: "Silver (-20%)" },
-    { key: "third", title: "Gold (-40%)" },
+    { key: "first", title: "Baru!" },
+    { key: "second", title: "Gue! (-20%)" },
+    { key: "third", title: "Pro! (-40%)" },
   ]);
   const [c1, dc1] = ["#EF4444", "#DC2626"];
   const titleFont = "epi-b";
   const lvlFont = "epi-m";
 
-  const [data, setData] = useState("");
+  const [data, setData] = useState(null);
   const { unlock, setUnlock, betacoins, setBetacoins } = useContext(Context);
   const midnightSecond = () => {
     let midnight = new Date();
@@ -50,6 +51,21 @@ const HomeScreen = ({ navigation }) => {
     midnight.setMilliseconds(0);
     return (midnight.getTime() - new Date().getTime()) / 1000;
   };
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          setData(snapshot.data());
+          console.log(snapshot.data());
+        } else {
+          console.log("User does not exist");
+        }
+      });
+  }, []);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -62,7 +78,7 @@ const HomeScreen = ({ navigation }) => {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         <Text style={{ padding: 15, fontFamily: "epi-b", fontSize: 30 }}>
-          Beta Lite (1 Bulan)
+          Beta Baru! (1 Bulan)
         </Text>
         <Text style={{ paddingLeft: 15, fontFamily: "epi-b", fontSize: 20 }}>
           IDR 49.999 / Bulan
@@ -247,7 +263,7 @@ const HomeScreen = ({ navigation }) => {
             style={{ fontFamily: "epi-bl" }}
             className="mt-1 px-5 text-center  text-lg text-white"
           >
-            Beli Babe Lite
+            Beli Babe Baru!
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -275,10 +291,10 @@ const HomeScreen = ({ navigation }) => {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         <Text style={{ padding: 15, fontFamily: "epi-b", fontSize: 30 }}>
-          Beta Silver (6 Bulan)
+          Beta Gue! (6 Bulan)
         </Text>
         <Text style={{ paddingLeft: 15, fontFamily: "epi-b", fontSize: 20 }}>
-          IDR 39.999 / Bulan
+          IDR 39.999 / Bulan (IDR 239.994)
         </Text>
 
         <View
@@ -300,7 +316,7 @@ const HomeScreen = ({ navigation }) => {
               <Text
                 style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
               >
-                Basmi iklan
+                Hilangkan iklan
               </Text>
 
               <Text
@@ -461,7 +477,7 @@ const HomeScreen = ({ navigation }) => {
             style={{ fontFamily: "epi-bl" }}
             className="mt-1 px-5 text-center  text-lg text-blue-50"
           >
-            Beli Babe Silver
+            Beli Babe Gue!
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -492,7 +508,10 @@ const HomeScreen = ({ navigation }) => {
           Beta Silver (12 Bulan)
         </Text>
         <Text style={{ paddingLeft: 15, fontFamily: "epi-b", fontSize: 20 }}>
-          IDR 29.999 / Bulan (PALING HEMAT)
+          IDR 29.999 / Bulan (IDR 359.988)
+        </Text>
+        <Text style={{ paddingLeft: 15, fontFamily: "epi-b", fontSize: 20 }}>
+          Paling Hemat!
         </Text>
         <View
           className="gap-y-3"
@@ -513,7 +532,7 @@ const HomeScreen = ({ navigation }) => {
               <Text
                 style={{ fontFamily: "epi-b", fontSize: 18, marginBottom: 5 }}
               >
-                Basmi iklan
+                Hilangkan iklan
               </Text>
 
               <Text
@@ -674,7 +693,7 @@ const HomeScreen = ({ navigation }) => {
             style={{ fontFamily: "epi-bl" }}
             className="mt-1 px-5 text-center  text-lg text-white"
           >
-            Beli Babe Gold
+            Beli Babe Pro!
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -698,27 +717,6 @@ const HomeScreen = ({ navigation }) => {
     second: SecondRoute,
     third: ThirdRoute,
   });
-
-  // const [betacoins, setBetacoins] = useState(0);
-  // const [levelProgress, setLevelProgress] = useState({
-  //   levelProgress: { chapter: 1, stage: 1, substage: 1 },
-  // });
-
-  // useEffect(() => {
-  //   firebase
-  //     .firestore()
-  //     .collection("users")
-  //     .doc(firebase.auth().currentUser.uid)
-  //     .get()
-  //     .then((snapshot) => {
-  //       if (snapshot.exists) {
-  //         setData(snapshot.data());
-  //         console.log(snapshot.data());
-  //       } else {
-  //         console.log("User does not exist");
-  //       }
-  //     });
-  // }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -773,9 +771,10 @@ const HomeScreen = ({ navigation }) => {
       stretch={true}
       height={40}
       borderRadius={50}
+      borderWidth={1}
       backgroundColor={unlock >= index ? COLORS.secondary : "lightgray"}
       backgroundDarker={unlock >= index ? "forestgreen" : "darkgray"}
-      backgroundShadow={COLORS.shadow}
+      backgroundShadow={COLORS.black}
       disabled={unlock >= index ? false : true}
       onPress={() => navigation.navigate("NoTabs", { level: index })}
       style={{
@@ -798,7 +797,10 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <>
-      <SafeAreaView style={{ backgroundColor: "#fff" }} className="flex-1">
+      <SafeAreaView
+        style={{ backgroundColor: COLORS.primary }}
+        className="flex-1"
+      >
         <StatusBar style="auto" />
         <Modal
           hasBackdrop={true}
@@ -866,9 +868,7 @@ const HomeScreen = ({ navigation }) => {
         <View className="flex-1">
           <View
             style={{
-              backgroundColor: "#fff",
-              borderBottomColor: COLORS.secondary,
-              borderBottomWidth: 0,
+              backgroundColor: COLORS.primary,
             }}
             className=" h-14 flex-row w-full justify-between items-center px-3"
           >
@@ -880,25 +880,10 @@ const HomeScreen = ({ navigation }) => {
               >
                 Betawi
               </Text>
-              {/* {data.firstName && (
-                <Text
-                  style={{ fontFamily: "epi-m" }}
-                  className="text-gray-50  text-2xl"
-                >
-                  👋 Halo, {data.firstName}
-                </Text>
-              )} */}
-              {/* <Fontisto name="flag" size={25} color={"#F9FAFB"} />
-              <Text
-                style={{ fontFamily: lvlFont }}
-                className="text-gray-50 ml-2  text-2xl"
-              >
-                | Pelajar
-              </Text> */}
             </View>
             <View className="flex-row items-center">
               <View className="flex-row items-center ml-4">
-                <FontAwesome5 name="fire" size={20} color={"orange"} />
+                <FontAwesome5 name="fire" size={20} color={"white"} />
                 <Text
                   style={{ fontFamily: "epi-b", color: COLORS.black }}
                   className=" ml-2  text-xl"
@@ -906,9 +891,9 @@ const HomeScreen = ({ navigation }) => {
                   5
                 </Text>
               </View>
-              {data.currency?.betacoins && (
+              {data?.currency?.betacoins ? (
                 <View className="flex-row items-center ml-4">
-                  <FontAwesome5 name="coins" size={20} color={c1} />
+                  <Betacoin width={30} height={30} />
                   <Text
                     style={{ fontFamily: "epi-b", color: COLORS.black }}
                     className=" ml-2  text-xl"
@@ -916,7 +901,7 @@ const HomeScreen = ({ navigation }) => {
                     {data.currency?.betacoins}
                   </Text>
                 </View>
-              )}
+              ) : null}
               <View className="flex-row items-center ml-4">
                 <FontAwesome5 name="bolt" size={20} color={"purple"} />
                 <Text
@@ -928,7 +913,7 @@ const HomeScreen = ({ navigation }) => {
               </View>
             </View>
           </View>
-          <View className="bg-white border-t py-2  border-b px-6 flex-row items-center justify-center">
+          <View className="bg-secondary border-t py-2  border-b px-6 flex-row items-center justify-center">
             <View className="relative flex-row items-center gap-x-3">
               <Badge
                 style={{
@@ -946,12 +931,12 @@ const HomeScreen = ({ navigation }) => {
                 until={midnightSecond()}
                 size={12}
                 digitStyle={{
-                  backgroundColor: "white",
-                  borderColor: "#F72F2F",
-                  borderWidth: 2,
+                  backgroundColor: "#F72F2F",
+                  borderColor: "black",
+                  borderWidth: 1,
                 }}
                 digitTxtStyle={{
-                  color: "#F72F2F",
+                  color: "#ffffff",
                   fontSize: 14,
                   fontWeight: "bold",
                 }}
@@ -965,9 +950,9 @@ const HomeScreen = ({ navigation }) => {
                 onPress={() => setShowModal(true)}
               >
                 <LinearGradient
-                  colors={["gold", "goldenrod"]}
+                  colors={["pink", "hotpink", "pink"]}
                   start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
+                  end={{ x: 1, y: 0 }}
                   style={{
                     paddingHorizontal: 10,
                     paddingVertical: 8,
@@ -981,10 +966,10 @@ const HomeScreen = ({ navigation }) => {
             </View>
           </View>
           <View>
-            <View className="absolute z-10 right-0 top-10 w-14 h-14 bg-primary border border-r-0 rounded-l-lg items-center justify-center">
-              <FontAwesome5 name={"scroll"} size={30} color="#f5f5f5" />
+            <View className="absolute z-10 right-0 top-10 w-14 h-14 bg-white border border-r-0 rounded-l-lg items-center justify-center">
+              <FontAwesome5 name={"scroll"} size={30} color={COLORS.primary} />
             </View>
-            <View className="absolute z-10 right-0 top-28 w-14 h-14 bg-primary border border-r-0 rounded-l-lg items-center justify-center">
+            <View className="absolute z-10 right-0 top-28 w-14 h-14 bg-white border border-r-0 rounded-l-lg items-center justify-center">
               <MaterialIcons
                 name={"leaderboard"}
                 size={30}
@@ -993,8 +978,9 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <SectionList
               contentContainerStyle={{
-                paddingBottom: 80,
-                backgroundColor: COLORS.primary,
+                paddingBottom: 200,
+                backgroundColor: "white",
+                paddingHorizontal: 10,
               }}
               sections={STAGE_BUTTONS}
               stickySectionHeadersEnabled={false}
@@ -1005,9 +991,7 @@ const HomeScreen = ({ navigation }) => {
               renderSectionHeader={({ section: { title } }) => (
                 <View
                   style={{
-                    borderBottomWidth: 1,
                     borderBottomColor: COLORS.background,
-                    backgroundColor: COLORS.secondary,
                   }}
                 >
                   <Text
@@ -1026,789 +1010,6 @@ const HomeScreen = ({ navigation }) => {
               )}
             ></SectionList>
           </View>
-
-          {/* <ScrollView className="px-7">
-            <Text
-              style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}
-            >
-              Bab 1 | Pemula
-            </Text>
-            <AwesomeButton
-              stretch={true}
-              height={40}
-              borderRadius={50}
-              backgroundColor={c1}
-              backgroundDarker={dc1}
-              onPress={() => navigation.navigate("NoTabs", { level: 1 })}
-              style={{ alignItems: "center", justifyContent: "center" }}
-            >
-              <Text
-                style={{
-                  fontFamily: "epi-m",
-                  alignSelf: "center",
-                  color: COLORS.white,
-                  paddingTop: 5,
-                }}
-              >
-                Level 1
-              </Text>
-            </AwesomeButton>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                onPress={() => navigation.navigate("NoTabs", { level: 2 })}
-                style={{ alignItems: "center", justifyContent: "center" }}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 2
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 3
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 4
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 5
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 6
-                </Text>
-              </AwesomeButton>
-            </View>
-            <Text
-              style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}
-            >
-              Bab 2 | Perantau
-            </Text>
-            <AwesomeButton
-              stretch={true}
-              height={40}
-              borderRadius={50}
-              backgroundColor={c1}
-              backgroundDarker={dc1}
-              onPress={() => navigation.navigate("NoTabs")}
-              style={{ alignItems: "center", justifyContent: "center" }}
-            >
-              <Text
-                style={{
-                  fontFamily: "epi-m",
-                  alignSelf: "center",
-                  color: COLORS.white,
-                  paddingTop: 5,
-                }}
-              >
-                Level 1
-              </Text>
-            </AwesomeButton>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 2
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 3
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 4
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 5
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 6
-                </Text>
-              </AwesomeButton>
-            </View>
-            <Text
-              style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}
-            >
-              Bab 3 | Pelajar
-            </Text>
-            <AwesomeButton
-              stretch={true}
-              height={40}
-              borderRadius={50}
-              backgroundColor={c1}
-              backgroundDarker={dc1}
-              onPress={() => navigation.navigate("NoTabs")}
-              style={{ alignItems: "center", justifyContent: "center" }}
-            >
-              <Text
-                style={{
-                  fontFamily: "epi-m",
-                  alignSelf: "center",
-                  color: COLORS.white,
-                  paddingTop: 5,
-                }}
-              >
-                Level 1
-              </Text>
-            </AwesomeButton>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 2
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 3
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 4
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 5
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 6
-                </Text>
-              </AwesomeButton>
-            </View>
-            <Text
-              style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}
-            >
-              Bab 4 | Pejuang
-            </Text>
-            <AwesomeButton
-              stretch={true}
-              height={40}
-              borderRadius={50}
-              backgroundColor={c1}
-              backgroundDarker={dc1}
-              onPress={() => navigation.navigate("NoTabs")}
-              style={{ alignItems: "center", justifyContent: "center" }}
-            >
-              <Text
-                style={{
-                  fontFamily: "epi-m",
-                  alignSelf: "center",
-                  color: COLORS.white,
-                  paddingTop: 5,
-                }}
-              >
-                Level 1
-              </Text>
-            </AwesomeButton>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 2
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 3
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 4
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 5
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 6
-                </Text>
-              </AwesomeButton>
-            </View>
-            <Text
-              style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}
-            >
-              Bab 5 | Pahlawan
-            </Text>
-            <AwesomeButton
-              stretch={true}
-              height={40}
-              borderRadius={50}
-              backgroundColor={c1}
-              backgroundDarker={dc1}
-              onPress={() => navigation.navigate("NoTabs")}
-              style={{ alignItems: "center", justifyContent: "center" }}
-            >
-              <Text
-                style={{
-                  fontFamily: "epi-m",
-                  alignSelf: "center",
-                  color: COLORS.white,
-                  paddingTop: 5,
-                }}
-              >
-                Level 1
-              </Text>
-            </AwesomeButton>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 2
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 3
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 4
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 5
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 6
-                </Text>
-              </AwesomeButton>
-            </View>
-            <Text
-              style={{ fontFamily: titleFont, fontSize: 30, marginTop: 30 }}
-            >
-              Bab 6 | Pendekar
-            </Text>
-            <AwesomeButton
-              stretch={true}
-              height={40}
-              borderRadius={50}
-              backgroundColor={c1}
-              backgroundDarker={dc1}
-              onPress={() => navigation.navigate("NoTabs")}
-              style={{ alignItems: "center", justifyContent: "center" }}
-            >
-              <Text
-                style={{
-                  fontFamily: "epi-m",
-                  alignSelf: "center",
-                  color: COLORS.white,
-                  paddingTop: 5,
-                }}
-              >
-                Level 1
-              </Text>
-            </AwesomeButton>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 2
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 3
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 4
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className="">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 5
-                </Text>
-              </AwesomeButton>
-            </View>
-            <View className=" mb-20">
-              <AwesomeButton
-                stretch={true}
-                height={40}
-                borderRadius={50}
-                backgroundColor={c1}
-                backgroundDarker={dc1}
-                fontFamily={lvlFont}
-              >
-                <Text
-                  style={{
-                    fontFamily: "epi-m",
-                    alignSelf: "center",
-                    color: COLORS.white,
-                    paddingTop: 5,
-                  }}
-                >
-                  Level 6
-                </Text>
-              </AwesomeButton>
-            </View>
-          </ScrollView> */}
         </View>
       </SafeAreaView>
     </>
